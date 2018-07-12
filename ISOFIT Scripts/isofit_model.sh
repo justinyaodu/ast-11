@@ -13,11 +13,11 @@ x0=${fitsarr[0]}
 y0=${fitsarr[1]}
 maxsma=${fitsarr[2]}
 
-posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$galname\", \"$filter\", \"gal_list.cat\")") #FIX
+posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$1\", \"gal_list.cat\")") #FIX
 
 bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
 bgarr=($bgdump)
-bg-${bgarr[${#bgarr[@]}-1]}
+bg=${bgarr[${#bgarr[@]}-1]}
 
 
 #... call isofit_cl.sh
