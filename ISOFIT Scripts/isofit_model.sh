@@ -27,8 +27,18 @@ bg=${bgarr[${#bgarr[@]}-1]}
 
 ./isofit_cl_p2.sh $bg $filename $modtab $modfits $modsubfits
 
+python -c "import sextractor; sextractor.sourceExtract(\"$1\")"
 
-#... call isofit_cl.sh
-#... call Source Extractor
-#... call isofit_cl.sh again with SE results
-#... remove intermediary files
+modtab=$1"_mod_SEx.tab"
+modfits=$1"_mod_SEx.fits"
+modsubfits=$1"_modsub_SEx.fits"
+
+./isofit_cl_p1.sh $x0 $y0 $posangle $maxsma $filename $modtab
+
+bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
+bgarr=($bgdump)
+bg=${bgarr[${#bgarr[@]}-1]}
+
+./isofit_cl_p2.sh $bg $filename $modtab $modfits $modsubfits
+
+#... remove intermediary files?
