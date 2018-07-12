@@ -24,4 +24,4 @@ def getBgrd(tablename):
 
     os.remove(dumpfile)
 
-    print bg
+    print(bg)
