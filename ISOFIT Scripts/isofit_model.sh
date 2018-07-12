@@ -41,4 +41,8 @@ bg=${bgarr[${#bgarr[@]}-1]}
 
 ./isofit_cl_p2.sh $bg $filename $modtab $modfits $modsubfits
 
-#... remove intermediary files?
+remove=true
+if [ "$remove" = true ] ; then
+    mv $modsubfits modeled_$filename
+    rm $1_*
+fi
