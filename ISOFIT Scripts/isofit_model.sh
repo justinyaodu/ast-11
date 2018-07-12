@@ -13,7 +13,7 @@ x0=${fitsarr[0]}
 y0=${fitsarr[1]}
 maxsma=${fitsarr[2]}
 
-posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$1\", \"gal_list.cat\")") #FIX
+posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$1\", \"gal_list.cat\")") 
 
 bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
 bgarr=($bgdump)
