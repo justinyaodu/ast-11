@@ -7,12 +7,15 @@ modtab=$1"_mod.tab"
 modfits=$1"_mod.fits"
 modsubfits=$1"_modsub.fits"
 
+bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
+bgarr=($bgdump)
+bg-${bgarr[${#bgarr[@]}-1]}
+
 
 #TODO argument setup:
 #CALCULATE CENTER
 #SET VAL FOR MAX_SMA
 #LOOK UP PA0
-#EXTRACT BGR
 
 
 #... call isofit_cl.sh
