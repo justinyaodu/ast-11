@@ -1,5 +1,5 @@
-if [ "$#" -ne 4 ]; then
-    echo "Usage: ./isofit_model.sh <GAL_NAME> <MAX_SMA> <BGR> <PA0>"
+if [ "$#" -ne 1 ]; then
+    echo "Usage: ./isofit_model.sh <GAL_NAME>"
 fi
 
 filename=$1".fits"
