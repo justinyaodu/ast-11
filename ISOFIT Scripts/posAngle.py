@@ -1,8 +1,11 @@
 import re
 import numpy as np
 
-def getPosAng(gal, filt, filename):
-    file = open(filename, "r")
+def getPosAng(galname, gallist):
+    file = open(gallist, "r")
+    split = galname.split("_")
+    gal = split[0]
+    filt = split[1]
     parsedfil = []
     for line in file:
         parsedfil.append(np.array(re.split("\s+", line)))
