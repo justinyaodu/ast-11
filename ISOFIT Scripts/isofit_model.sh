@@ -1,6 +1,10 @@
+#Written to run on Linux IRAF with ISOFIT installed (Ubuntu)
+
 if [ "$#" -ne 1 ]; then
     echo "Usage: ./isofit_model.sh <GAL_NAME>"
 fi
+
+ulimit -s unlimited
 
 filename=$1".fits"
 modtab=$1"_mod.tab"
