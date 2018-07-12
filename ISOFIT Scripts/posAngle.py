@@ -11,18 +11,16 @@ def getPosAng(galname, gallist):
         parsedfil.append(np.array(re.split("\s+", line)))
         #print(re.split("\s+", line))
     parsedfile = np.array(parsedfil)
+    pa = 0
     for line in parsedfile:
         if(line[1] == gal):
             if(filt == "u"):
-                print(line[13])
+                pa = int(line[13])
             elif(filt == "g"):
-                print(line[14])
+                pa = int(line[14])
             elif(filt == "i"):
-                print(line[16])
+                pa = int(line[16])
             elif(filt == "z"):
-                print(line[17])
-            else:
-                print("not found")
+                pa = int(line[17])
+    print(pa)
     file.close()
-
-        
