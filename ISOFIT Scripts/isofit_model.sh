@@ -2,10 +2,10 @@ if [ "$#" -ne 4 ]; then
     echo "Usage: ./isofit_model.sh <GAL_NAME> <MAX_SMA> <BGR> <PA0>"
 fi
 
-filename=$(python -c "import arg_extract; arg_extract.origFits(\"$1\")")
-modtab=$(python -c "import arg_extract; arg_extract.modTab(\"$1\")")
-modfits=$(python -c "import arg_extract; arg_extract.modFits(\"$1\")")
-modsubfits=$(python -c "import arg_extract; arg_extract.modsubFits(\"$1\")")
+filename=$1".fits"
+modtab=$1"_mod.tab"
+modfits=$1"_mod.fits"
+modsubfits=$1"_modsub.fits"
 
 
 #TODO argument setup:
