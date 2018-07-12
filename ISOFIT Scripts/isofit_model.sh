@@ -44,5 +44,6 @@ bg=${bgarr[${#bgarr[@]}-1]}
 remove=true
 if [ "$remove" = true ] ; then
     mv $modsubfits modeled_$filename
+    rm $filename".pl"
     rm $1_*
 fi
