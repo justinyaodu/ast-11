@@ -1,6 +1,6 @@
 #!/home/rishi/anaconda2/envs/iraf27/iraf/bin/cl.e -f
 
-# Arguments: "x0 y0 pa0 maxsma filename filemodtab"
+# Arguments: "filename filemodtab geomparfile"
 
 logver = "IRAF V2.16 March 2012"
 set	home		= "/home/rishi/Documents/iraf/"
@@ -16,23 +16,13 @@ stsdas
 analysis
 isophote
 
-int x
-int y
-int pa
-int maxsma
 string filename
 string filemodtab
+string geomparfile
 {
-	print(args) | scanf("%i %i %i %i %s %s", x, y, pa, maxsma, filename, filemodtab)
+	print(args) | scanf("%s %s %s", filename, filemodtab, geomparfile)
 
-	geompar.x0 = x
-	geompar.y0 = y
-	geompar.pa0 = pa
-	geompar.maxsma = maxsma
-
-	samplepar.harmoni = "2 3 4"
-
-	printf("ellipse (\"%s\",\"%s\", dqf=\".c1h\", inellip=\"\", geompar=\"\", controlpar=\"\",samplepar=\"\", magpar=\"\", interactive=no, device=\"red\", icommands=\"\",gcommands=\"\", masksz=5, region=no, memory=yes, verbose=yes)", filename, filemodtab) | cl()
+	printf("ellipse (\"%s\",\"%s\", dqf=\".c1h\", inellip=\"\", geompar=\"%s\", controlpar=\"\",samplepar=\"samplepar.par\", magpar=\"\", interactive=no, device=\"red\", icommands=\"\",gcommands=\"\", masksz=5, region=no, memory=yes, verbose=yes)", filename, filemodtab, geomparfile) | cl()
 
 	logout
 }

@@ -19,7 +19,11 @@ maxsma=${fitsarr[2]}
 
 posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$1\", \"gal_list.cat\")")
 
-./isofit_cl_p1.sh $x0 $y0 $posangle $maxsma $filename $modtab
+geomparfile=$filename"_geompar.par"
+
+python -c "import generate_paramfiles; generate_paramfiles.gen_geompar(\"$geomparfile\",x0=$x0,y0=$y0,maxsma=$maxsma,pa0=$posangle)"
+
+./isofit_cl_p1.sh $filename $modtab $geomparfile
 
 bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
 bgarr=($bgdump)
@@ -33,7 +37,7 @@ modtab=$1"_mod_SEx.tab"
 modfits=$1"_mod_SEx.fits"
 modsubfits=$1"_modsub_SEx.fits"
 
-./isofit_cl_p1.sh $x0 $y0 $posangle $maxsma $filename $modtab
+./isofit_cl_p1.sh $filename $modtab $geomparfile
 
 bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
 bgarr=($bgdump)
