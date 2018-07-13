@@ -69,4 +69,5 @@ if [ "$remove" = true ] ; then
   rm $1"_seg.fits"
   rm $modtabsex
   rm $modfitssex
+  rm $geomparfile
 fi
