@@ -1,17 +1,17 @@
 #Written to run on Linux IRAF with ISOFIT installed (Ubuntu)
 
-if [ "$#" -ne 1 ] && [ "$#" -ne 2 ] then
+if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
     echo "Usage: ./isofit_model.sh <GAL_NAME> [keep/remove]"
     exit 1
 fi
 
 remove=false
-if [ "$#" -e 2 ] then
-    if [ "$2" = "keep" ]
+if [ "$#" -e 2 ]; then
+    if [ "$2" = "keep" ];
     then
       remove=false
     else
-      if [ "$2" = "remove" ]
+      if [ "$2" = "remove" ];
       then
         remove=true
       else
