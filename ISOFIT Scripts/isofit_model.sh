@@ -19,7 +19,7 @@ maxsma=${fitsarr[2]}
 
 posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$1\", \"gal_list.cat\")")
 
-geomparfile=$filename"_geompar.par"
+geomparfile=$1"_geompar.par"
 
 python -c "import generate_paramfiles; generate_paramfiles.gen_geompar(\"$geomparfile\",x0=$x0,y0=$y0,maxsma=$maxsma,pa0=$posangle)"
 
