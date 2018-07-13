@@ -6,7 +6,7 @@ if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
 fi
 
 remove=false
-if [ "$#" -e 2 ]; then
+if [ "$#" -ne 1 ]; then
     if [ "$2" = "keep" ];
     then
       remove=false
