@@ -17,6 +17,8 @@ if [ "$#" -e 2 ] then
       else
         echo "Usage: ./isofit_model.sh <GAL_NAME> [keep/remove]"
         exit 1
+      fi
+    fi
 fi
 
 ulimit -s unlimited
