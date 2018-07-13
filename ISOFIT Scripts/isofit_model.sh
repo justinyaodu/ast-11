@@ -1,7 +1,22 @@
 #Written to run on Linux IRAF with ISOFIT installed (Ubuntu)
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: ./isofit_model.sh <GAL_NAME>"
+if [ "$#" -ne 1 ] && [ "$#" -ne 2 ] then
+    echo "Usage: ./isofit_model.sh <GAL_NAME> [keep/remove]"
+    exit 1
+fi
+
+remove=false
+if [ "$#" -e 2 ] then
+    if [ "$2" = "keep" ]
+    then
+      remove=false
+    else
+      if [ "$2" = "remove" ]
+      then
+        remove=true
+      else
+        echo "Usage: ./isofit_model.sh <GAL_NAME> [keep/remove]"
+        exit 1
 fi
 
 ulimit -s unlimited
@@ -33,22 +48,23 @@ bg=${bgarr[${#bgarr[@]}-1]}
 
 python -c "import sextractor; sextractor.sourceExtract(\"$1\")"
 
-modtab=$1"_mod_SEx.tab"
-modfits=$1"_mod_SEx.fits"
-modsubfits=$1"_modsub_SEx.fits"
+modtabsex=$1"_mod_SEx.tab"
+modfitssex=$1"_mod_SEx.fits"
+modsubfitssex=$1"_modsub_SEx.fits"
 
-./isofit_cl_p1.sh $filename $modtab $geomparfile
+./isofit_cl_p1.sh $filename $modtabsex $geomparfile
 
-bgdump=$(python -c "import background; background.getBgrd(\"$modtab\")")
+bgdump=$(python -c "import background; background.getBgrd(\"$modtabsex\")")
 bgarr=($bgdump)
 bg=${bgarr[${#bgarr[@]}-1]}
 
-./isofit_cl_p2.sh $bg $filename $modtab $modfits $modsubfits
+./isofit_cl_p2.sh $bg $filename $modtabsex $modfitssex $modsubfitssex
 
-remove=true
 if [ "$remove" = true ] ; then
-    mv $modsubfits modeled_$filename
-    mv $1"_modsub.fits" modeled_noSEx_$filename
-    rm $filename".pl"
-    rm $1_*
+  rm $modtab
+  rm $modfits
+  rm $filename".pl"
+  rm $1"_seg.fits"
+  rm $modtabsex
+  rm $modfitssex
 fi
