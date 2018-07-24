@@ -32,9 +32,9 @@ fitsdump=$(python -c "import fits_center; fits_center.getFitsInfo(\"$filename\")
 fitsarr=($fitsdump)
 x0=${fitsarr[0]}
 y0=${fitsarr[1]}
-maxsma=${fitsarr[2]}
 
-posangle=$(python -c "import posAngle; posAngle.getPosAng(\"$1\", \"gal_list.cat\")")
+posangle=$(python -c "import read_catalog; read_catalog.getPosAng(\"$1\", \"gal_list.cat\")")
+maxsma=$(python -c "import read_catalog; read_catalog.getSMA(\"$1\", \"gal_list.cat\")")
 
 geomparfile=$1"_geompar.par"
 
