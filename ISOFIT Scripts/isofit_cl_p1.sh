@@ -22,7 +22,7 @@ string geomparfile
 {
 	print(args) | scanf("%s %s %s", filename, filemodtab, geomparfile)
 
-	printf("ellipse (\"%s\",\"%s\", dqf=\".c1h\", inellip=\"\", geompar=\"%s\", controlpar=\"\",samplepar=\"samplepar.par\", magpar=\"\", interactive=no, device=\"red\", icommands=\"\",gcommands=\"\", masksz=5, region=no, memory=yes, verbose=yes)", filename, filemodtab, geomparfile) | cl()
+	printf("ellipse (\"%s\",\"%s\", dqf=\".c1h\", inellip=\"\", geompar=\"%s\", controlpar=\"controlpar.par\",samplepar=\"samplepar.par\", magpar=\"\", interactive=no, device=\"red\", icommands=\"\",gcommands=\"\", masksz=5, region=no, memory=yes, verbose=yes)", filename, filemodtab, geomparfile) | cl()
 
 	logout
 }
