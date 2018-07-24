@@ -33,10 +33,14 @@ def getPosAng(galname, gallist):
                 pa = int(float(line[i_ind]))
             elif(filt == "z"):
                 pa = int(float(line[z_ind]))
+    if pa > 90:
+        pa = 90
+    if pa < -90:
+        pa = -90
     print(pa)
     file.close()
-    
-    
+
+
 def getSMA(galname, gallist):
     file = open(gallist, "r")
     split = galname.split("_")
