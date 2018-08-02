@@ -38,10 +38,11 @@ def rmf(filename):
     xlen = len(data)
     ylen = len(data[0])
     newdata = np.zeros((xlen,ylen))
-    rad = 10
+    outrad = 15
+    inrad = 10
     for i in range(xlen):
         for j in range(ylen):
-            arr = getRingArray(data, i, j, rad, xlen, ylen)
+            arr = getRingArray(data, i, j, outrad, inrad, xlen, ylen)
             subt = np.median(arr)
             newdata[i][j] = data[i][j] - subt
     hdu = fits.PrimaryHDU(newdata)
@@ -77,6 +78,8 @@ if __name__ == "__main__":
         splits = int(np.ceil(float(len(lines))/threads))
         linesplits = [lines[i:i + splits] for i in range(0, len(lines), splits)]
         processes = []
+        if len(linesplits) < threads:
+            threads = len(linesplits)
         for i in range(threads):
             p = multiprocessing.Process(target=rmf_process, args=(linesplits[i],))
             p.start()
