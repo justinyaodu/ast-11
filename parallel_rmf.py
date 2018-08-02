@@ -4,6 +4,7 @@ import numpy as np
 import multiprocessing
 import re
 import os
+from tqdm import tqdm
 np.set_printoptions(threshold=np.nan)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
@@ -77,19 +78,35 @@ def rmf(filename,galname):
     data = scilist[0].data
     xlen = len(data)
     ylen = len(data[0])
+    print(xlen,ylen)
     x0 = xlen/2
     y0 = ylen/2
     newdata = np.zeros((xlen,ylen))
-    outrad = 15
-    inrad = 10
-    for i in range(xlen):
+    outrad = int(rad/9)
+    inrad = int(rad/18)
+    if outrad == inrad or outrad <= 0 or inrad <= 0:
+        outrad = 20
+        inrad = 10
+
+    outsidevals = []
+    insidevals = []
+    for i in tqdm(range(xlen)):
         for j in range(ylen):
             if(i >= x0-rad and i <= x0+rad and j >= y0-rad and j <= y0+rad):
                 arr = getRingArray(data, i, j, outrad, inrad, xlen, ylen)
                 subt = np.median(arr)
                 newdata[i][j] = data[i][j] - subt
+                insidevals.append(newdata[i][j])
             else:
                 newdata[i][j] = data[i][j]
+                outsidevals.append(newdata[i][j])
+
+    median = np.median(outsidevals) - np.median(insidevals)
+
+    for i in range(xlen):
+        for j in range(ylen):
+            if(i >= x0-rad and i <= x0+rad and j >= y0-rad and j <= y0+rad):
+                newdata[i][j] = newdata[i][j] + median
     hdu = fits.PrimaryHDU(newdata)
     newfilename = filename[:-5] + '_mediansub.fits'
 
