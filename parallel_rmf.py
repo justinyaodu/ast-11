@@ -73,13 +73,12 @@ def getSMA(galname, gallist):
 
 def rmf(filename,galname):
     rad = getSMA("VCC" + galname,"gal_list.cat")
-    print(rad)
     scilist = fits.open(filename)
     data = scilist[0].data
-    x0 = int((scilist[0].header[3])/2)
-    y0 = int((scilist[0].header[4])/2)
     xlen = len(data)
     ylen = len(data[0])
+    x0 = xlen/2
+    y0 = ylen/2
     newdata = np.zeros((xlen,ylen))
     outrad = 15
     inrad = 10
