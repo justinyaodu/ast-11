@@ -5,28 +5,31 @@ import multiprocessing
 np.set_printoptions(threshold=np.nan)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
-    if (xcor >= xlen or ycor >= ylen or xcor < 0 or ycor < 0):
-        return True
-    return False
+    return (xcor >= xlen or ycor >= ylen or xcor < 0 or ycor < 0)
 
-def getRingArray(data, x, y, rad, xlen, ylen):
+def getRingArray(data, x, y, outer_rad, inner_rad, xlen, ylen):
     arr = []
-    for i in range(2*rad+1):
-        xcor = i + x - rad
-        ycor = y + rad
-        if not outOfBounds(xcor, ycor, xlen, ylen):
-            arr.append(data[xcor][ycor])
-        ycor = y - rad
-        if not outOfBounds(xcor, ycor, xlen, ylen):
-            arr.append(data[xcor][ycor])
-    for i in range(2*rad - 1):
-        ycor = y - rad + 1 + i
-        xcor = x - rad
-        if not outOfBounds(xcor, ycor, xlen, ylen):
-            arr.append(data[xcor][ycor])
-        xcor = x + rad
-        if not outOfBounds(xcor, ycor, xlen, ylen):
-            arr.append(data[xcor][ycor])
+
+    for i in range(2*outer_rad + 1):
+        for j in range(outer_rad - inner_rad + 1):
+            xcor = x - outer_rad + i
+            y1 = y - outer_rad + j
+            y2 = y + inner_rad + j
+            if not outOfBounds(xcor,y1,xlen,ylen):
+                arr.append(data[xcor][y1])
+            if not outOfBounds(xcor,y2,xlen,ylen):
+                arr.append(data[xcor][y2])
+
+    for i in range(2*inner_rad - 1):
+        for j in range(outer_rad - inner_rad + 1):
+            ycor = y - inner_rad + 1 + i
+            x1 = x - outer_rad + j
+            x2 = x + outer_rad -j
+            if not outOfBounds(x1,ycor,xlen,ylen):
+                arr.append(data[x1][ycor])
+            if not outOfBounds(x2,ycor,xlen,ylen):
+                arr.append(data[x2][ycor])
+
     return arr
 
 def rmf(filename):
