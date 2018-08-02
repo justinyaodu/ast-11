@@ -32,8 +32,8 @@ def getRingArray(data, x, y, outer_rad, inner_rad, xlen, ylen):
 
     return arr
 
-def rmf(filename):
-    file = open(gallist, "r")
+def rmf(filename,galname):
+    file = open('gal_list.cat', "r")
     split = galname.split("_")
     gal = split[0]
     filt = split[1]
@@ -86,7 +86,8 @@ def rmf_process(lines_to_run):
     for line in lines_to_run:
         try:
             filename = "VCC" + line + "_g.fits"
-            rmf(filename)
+            galname = line + "_g"
+            rmf(filename,galname)
             print("Completed RMF Procedure for " + str(filename))
         except Exception as e:
             print(e)
