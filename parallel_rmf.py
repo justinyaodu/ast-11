@@ -64,8 +64,8 @@ def rmf(filename,galname):
     newdata = np.zeros((xlen,ylen))
     outrad = 15
     inrad = 10
-    for i in range(x0-rad,x0+rad+1):
-        for j in range(y0-rad,y0+rad+1):
+    for i in range(xlen):
+        for j in range(ylen):
             if(i >= x0-rad and i <= x0+rad and j >= y0-rad and j <= y0+rad):
                 arr = getRingArray(data, i, j, outrad, inrad, xlen, ylen)
                 subt = np.median(arr)
