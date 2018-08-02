@@ -34,29 +34,46 @@ def getRingArray(data, x, y, outer_rad, inner_rad, xlen, ylen):
 
     return arr
 
-def rmf(filename,galname):
-    file = open('gal_list.cat', "r")
+def getSMA(galname, gallist):
+    file = open(gallist, "r")
     split = galname.split("_")
     gal = split[0]
     filt = split[1]
     parsedfil = []
-    ind = -1
+    u_ind = -1
+    g_ind = -1
+    i_ind = -1
+    z_ind = -1
     for line in file:
         parsedfil.append(np.array(re.split("\s+", line)))
     parsedfile = np.array(parsedfil)
-    target = filt + '_Re(arcsec)'
     for line in parsedfile:
         if(line[1] == 'Name'):
             for x in range(len(line)):
-                if(line[x] == target):
-                    ind = x
+                if(line[x] == 'u_Re(arcsec)'):
+                    u_ind = x
+                    g_ind = x+1
+                    i_ind = x+3
+                    z_ind = x+4
     rad = 0
     for line in parsedfile:
         if(line[1] == gal):
-            rad = int(float(line[ind]))
+            if(filt == "u"):
+                rad = int(float(line[u_ind]))
+            elif(filt == "g"):
+                rad = int(float(line[g_ind]))
+            elif(filt == "i"):
+                rad= int(float(line[i_ind]))
+            elif(filt == "z"):
+                rad = int(float(line[z_ind]))
     rad /= 0.187
     rad *= 5
-    rad = int(rad)
+    file.close()
+    return rad
+
+def rmf(filename,galname):
+    rad = getSMA("VCC" + galname,"gal_list.cat")
+    print(rad)
     scilist = fits.open(filename)
     data = scilist[0].data
     x0 = int((scilist[0].header[3])/2)
