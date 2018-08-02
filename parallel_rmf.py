@@ -33,18 +33,45 @@ def getRingArray(data, x, y, outer_rad, inner_rad, xlen, ylen):
     return arr
 
 def rmf(filename):
+    file = open(gallist, "r")
+    split = galname.split("_")
+    gal = split[0]
+    filt = split[1]
+    parsedfil = []
+    ind = -1
+    for line in file:
+        parsedfil.append(np.array(re.split("\s+", line)))
+    parsedfile = np.array(parsedfil)
+    target = filt + '_Re(arcsec)'
+    for line in parsedfile:
+        if(line[1] == 'Name'):
+            for x in range(len(line)):
+                if(line[x] == target):
+                    ind = x
+    rad = 0
+    for line in parsedfile:
+        if(line[1] == gal):
+            rad = int(float(line[ind]))
+    rad /= 0.187
+    rad *= 5
+    rad = int(rad)
     scilist = fits.open(filename)
     data = scilist[0].data
+    x0 = int((scilist[0].header[3])/2)
+    y0 = int((scilist[0].header[4])/2)
     xlen = len(data)
     ylen = len(data[0])
     newdata = np.zeros((xlen,ylen))
     outrad = 15
     inrad = 10
-    for i in range(xlen):
-        for j in range(ylen):
-            arr = getRingArray(data, i, j, outrad, inrad, xlen, ylen)
-            subt = np.median(arr)
-            newdata[i][j] = data[i][j] - subt
+    for i in range(x0-rad,x0+rad+1):
+        for j in range(y0-rad,y0+rad+1):
+            if(i >= x0-rad and i <= x0+rad and j >= y0-rad and j <= y0+rad):
+                arr = getRingArray(data, i, j, outrad, inrad, xlen, ylen)
+                subt = np.median(arr)
+                newdata[i][j] = data[i][j] - subt
+            else:
+                newdata[i][j] = data[i][j]
     hdu = fits.PrimaryHDU(newdata)
     newfilename = filename[:-5] + '_mediansub.fits'
 
