@@ -2,6 +2,8 @@ import sys
 from astropy.io import fits
 import numpy as np
 import multiprocessing
+import re
+import os
 np.set_printoptions(threshold=np.nan)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
