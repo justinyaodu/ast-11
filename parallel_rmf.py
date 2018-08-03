@@ -78,19 +78,21 @@ def rmf(filename,galname):
     data = scilist[0].data
     xlen = len(data)
     ylen = len(data[0])
-    print(xlen,ylen)
     x0 = xlen/2
     y0 = ylen/2
     newdata = np.zeros((xlen,ylen))
-    outrad = int(rad/9)
-    inrad = int(rad/18)
-    if outrad == inrad or outrad <= 0 or inrad <= 0:
-        outrad = 20
-        inrad = 10
-
+    #rad_dist = 8
+    #outrad = int(rad/9)
+    #inrad = outrad - rad_dist
+    #if outrad == inrad or outrad <= 0 or inrad <= 0:
+        #outrad = 20
+        #inrad = 10
+    outrad = 20
+    inrad = 10
+    #print(outrad,inrad)
     outsidevals = []
     insidevals = []
-    for i in tqdm(range(xlen)):
+    for i in range(xlen):
         for j in range(ylen):
             if(i >= x0-rad and i <= x0+rad and j >= y0-rad and j <= y0+rad):
                 arr = getRingArray(data, i, j, outrad, inrad, xlen, ylen)
