@@ -4,7 +4,8 @@ import numpy as np
 import multiprocessing
 import re
 import os
-from tqdm import tqdm
+#from tqdm import tqdm
+import time
 np.set_printoptions(threshold=np.nan)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
@@ -121,19 +122,26 @@ def rmf(filename,galname):
 
 def rmf_process(lines_to_run):
     for line in lines_to_run:
-        try:
-            filename = "VCC" + line + "_g.fits"
-            galname = line + "_g"
-            rmf(filename,galname)
-            print("Completed RMF Procedure for " + str(filename))
-        except Exception as e:
-            print(e)
-            continue
+        filters = ["u","i","z"]
+        for filter in filters:
+            filename = "VCC" + line + "_" + filter + ".fits"
+            galname = line + "_" + filter
+            print("Starting on " + galname)
+            try:
+                rmf(filename,galname)
+            except Exception as e:
+                print(e)
+                continue
+        print("Completed RMF Procedure for VCC" + str(line))
+
 
 if __name__ == "__main__":
     if(not (len(sys.argv) == 2)):
         print("Usage: python MedianRing.py <tags filename>")
     else:
+        #print("Waiting for 90 minutes for download to finish")
+        #time.sleep(5400)
+
         tagsfile = sys.argv[1]
         f = open(tagsfile, "r")
         lines = []
