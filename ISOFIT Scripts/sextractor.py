@@ -2,6 +2,8 @@ import sewpy
 import pyraf
 from pyraf import iraf
 
+
+#Where is this definition used? Which files?
 def sourceExtract(galaxyname):
 	sew = sewpy.SEW(params=["NUMBER"],
 	config= {"DETECT_MINAREA": 50, "DETECT_THRESH": 3.0,
