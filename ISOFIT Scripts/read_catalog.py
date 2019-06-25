@@ -1,6 +1,8 @@
 import re
 import numpy as np
 
+#What does "PosAng" refer to?
+#Which file are these for loops running through, and what do these files mean?
 def getPosAng(galname, gallist):
     file = open(gallist, "r")
     split = galname.split("_")
