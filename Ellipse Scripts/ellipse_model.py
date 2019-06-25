@@ -21,7 +21,6 @@ if __name__ == "__main__":
         iraf.analysis()
         iraf.isophote()
 
-	#comment
         #Configure geompar
         pyraf.iraftask.gettask("geompar")[0].setParam("x0", center_x)
         pyraf.iraftask.gettask("geompar")[0].setParam("y0", center_y)
