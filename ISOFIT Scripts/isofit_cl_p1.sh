@@ -12,6 +12,7 @@ stty xgterm
 set	imextn		= "oif:imh fxf:fits,fit fxb:fxb plf:pl qpf:qp stf:hhh,??h"
 showtype = yes
 
+#stuff we did in tutorial, open up isophote to use ellipse
 stsdas
 analysis
 isophote
@@ -19,6 +20,7 @@ isophote
 string filename
 string filemodtab
 string geomparfile
+#opens ellipse and calls files with parameters
 {
 	print(args) | scanf("%s %s %s", filename, filemodtab, geomparfile)
 

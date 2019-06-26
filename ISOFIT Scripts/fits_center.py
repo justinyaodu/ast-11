@@ -1,3 +1,4 @@
+#finds the center of the FITS image to use in ellipse and bmodel
 from astropy.io import fits
 
 def getFitsInfo(filename):
