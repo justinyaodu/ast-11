@@ -1,4 +1,0 @@
-input,s,a,"VCC1720_i_seg.fits",,,"Input images"
-output,s,a,"VCC1720_i.fits.pl",,,"Output images or directory"
-verbose,b,h,yes,,,"Print operations performed?"
-mode,s,h,"ql",,,

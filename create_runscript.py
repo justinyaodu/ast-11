@@ -1,5 +1,9 @@
 import os
 
+#this file looks at directory of galaxies, goes through all of
+#them, and creates a file. Makes it easier to run all scripts/
+#galaxies
+
 if __name__ == '__main__':
     tf1 = open("RMFtags.txt", "r")
     tf2 = open("Disktags.txt", "r")

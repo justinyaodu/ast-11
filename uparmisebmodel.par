@@ -1,0 +1,11 @@
+table,s,a,"VCC1720_i_mod.tab",,,"isophote table"
+output,s,a,"VCC1720_i_mod2.fits",,,"output (model) image"
+parent,s,h,"",,,"parent image"
+fulltable,b,h,yes,,,"use full range of `SMA\' from table ?"
+minsma,r,h,1.,0.,,"minimum modelling SMA"
+maxsma,r,h,1.,0.,,"maximum modelling SMA"
+backgr,r,h,1.,,,"background value"
+interp,s,h,"spline",nearest|linear|poly3|spline,,"interpolation algorithm"
+highar,b,h,no,,,"add higher harmonics ?"
+verbose,b,h,no,,,"print info ?"
+mode,s,h,"al",,,
