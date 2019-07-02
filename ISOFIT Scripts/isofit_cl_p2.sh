@@ -1,6 +1,7 @@
 #!/home/rishi/anaconda2/envs/iraf27/iraf/bin/cl.e -f
 
 # Arguments: "backgr filename filemodtab filemodfits filemodsub"
+# generates image from galaxy light model and performs subtraction
 
 logver = "IRAF V2.16 March 2012"
 set	home		= "/home/rishi/Documents/iraf/"

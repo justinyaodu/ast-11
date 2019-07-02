@@ -1,7 +1,6 @@
 import sys
 from astropy.io import fits
 import numpy as np
-from tqdm import tqdm
 np.set_printoptions(threshold=np.nan)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
