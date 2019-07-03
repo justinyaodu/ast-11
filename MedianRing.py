@@ -1,6 +1,8 @@
 import sys
 from astropy.io import fits
 import numpy as np
+
+# this line causes problems under python 2
 np.set_printoptions(threshold=np.nan)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
@@ -45,9 +47,7 @@ if __name__ == "__main__":
                 subt = np.median(arr)
                 newdata[i][j] = data[i][j] - subt
         hdu = fits.PrimaryHDU(newdata)
+
+        # trims .fits extension from filename before appending
         newfilename = filename[:-5] + '_mediansub.fits'
         hdu.writeto(newfilename)
-
-
-            
-            

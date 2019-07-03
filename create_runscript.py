@@ -20,6 +20,8 @@ if __name__ == '__main__':
             continue
     f = open("generated_runscript.sh","w")
     for filename in os.listdir("."):
+        # skip file if _sig file exists
+        # TODO what is a _sig file?
         if filename.endswith("_sig.fits"):
             continue
         if filename.endswith(".fits"):
