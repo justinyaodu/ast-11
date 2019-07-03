@@ -3,6 +3,8 @@
 # use the outermost intensity value from an Ellipse/ISOFIT model
 # as the background light value
 
+source common.sh
+
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 1 ]; then
 	>&2 echo "Usage: $0 <tablefile>"
@@ -26,7 +28,7 @@ fi
 
 # dump table data to file
 # discard console output (package import banners and such)
-"./background.cl" "$tablefile" "$dumpfile" > "$logfile"
+"./background.cl" "$tablefile" "$dumpfile" > /dev/null
 
 # print last line, trim whitespace
 tail -n 1 < "$dumpfile" | xargs
