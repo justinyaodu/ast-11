@@ -2,6 +2,8 @@
 
 # use imarith to subtract one image from another
 
+source common.sh
+
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 3 ]; then
 	>&2 echo "Usage: $0 <image_file_1.fits> <image_file_2.fits> <output_image.fits>"
@@ -11,8 +13,6 @@ fi
 infile1="$1"
 infile2="$2"
 outfile="$3"
-
-ulimit -s unlimited
 
 # abort if input files don't exist
 if [ ! -f "$infile1" ] || [ ! -f "$infile2" ]; then
