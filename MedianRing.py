@@ -1,7 +1,7 @@
 import sys
 from astropy.io import fits
 import numpy as np
-np.set_printoptions(threshold=np.nan)
+np.set_printoptions(threshold=np.inf)
 
 def outOfBounds(xcor, ycor, xlen, ylen):
     if (xcor >= xlen or ycor >= ylen or xcor < 0 or ycor < 0):
