@@ -1,17 +1,19 @@
 #!/bin/bash
 
-# use imcopy to copy an image
+# use Source Extractor to generate a pixel mask
 
 source common.sh
 
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 2 ]; then
-	>&2 echo "Usage: $0 <input.fits> <output.fits>"
+	>&2 echo "Usage: $0 <input_image.fits> <output_mask.fits>"
 	exit 1
 fi
 
 infile="$1"
 outfile="$2"
+
+ulimit -s unlimited
 
 # abort if input file doesn't exist
 if [ ! -f "$infile" ]; then
@@ -25,5 +27,5 @@ if [ -f "$outfile" ]; then
 	exit 1
 fi
 
-# perform copy
-./imcopy.cl "$infile" "$outfile" > /dev/null
+# create mask
+sextractor "$infile" -DETECT_MINAREA 50 -DETECT_THRESH 3.0 -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME "$outfile"
