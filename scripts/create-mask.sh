@@ -2,17 +2,33 @@
 
 # use sextractor.sh and imcopy.sh to generate pixel mask files
 
-source common.sh
+usage() {
+	>&2 echo "Usage: $0 <input.fits> [--clean]"
+}
 
 # print usage message if number of parameters is incorrect
-if [ "$#" -ne 1 ]; then
-	>&2 echo "Usage: $0 <input.fits>"
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+	usage
 	exit 1
 fi
 
 infile="$1"
 outfile="${infile::-5}_seg.fits"
 copyfile="$infile.pl"
+cleanopt="$2"
+
+# if option specified
+if [ "$cleanopt" != "" ]; then
+	# if option is correctly specified, delete files
+	if [ "$cleanopt" == "--clean" ]; then
+		rm -f "$outfile" "$copyfile"
+		exit 0
+	# otherwise, print usage message
+	else
+		usage
+		exit 1
+	fi
+fi
 
 # abort if input file doesn't exist
 if [ ! -f "$infile" ]; then
