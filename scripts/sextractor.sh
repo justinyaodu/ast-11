@@ -13,8 +13,6 @@ fi
 infile="$1"
 outfile="$2"
 
-ulimit -s unlimited
-
 # abort if input file doesn't exist
 if [ ! -f "$infile" ]; then
 	>&2 echo "$0: error: input file does not exist"
@@ -28,4 +26,4 @@ if [ -f "$outfile" ]; then
 fi
 
 # create mask
-sextractor "$infile" -DETECT_MINAREA 50 -DETECT_THRESH 3.0 -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME "$outfile" > /dev/null
+sextractor "$infile" -DETECT_MINAREA 50 -DETECT_THRESH 3.0 -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME "$outfile"

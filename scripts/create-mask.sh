@@ -13,7 +13,11 @@ if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
 fi
 
 infile="$1"
-outfile="${infile::-5}_seg.fits"
+
+# assuming the input file ends with "_modsub1.fits"
+# this removes those 13 characters
+outfile="${infile::-13}_seg.fits"
+
 copyfile="$infile.pl"
 cleanopt="$2"
 

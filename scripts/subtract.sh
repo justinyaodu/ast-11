@@ -27,4 +27,4 @@ if [ -f "$outfile" ]; then
 fi
 
 # perform subtraction
-./subtract.cl "$infile1" "$infile2" "$outfile" > /dev/null
+./subtract.cl "$infile1" "$infile2" "$outfile"

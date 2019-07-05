@@ -26,4 +26,4 @@ if [ -f "$outfile" ]; then
 fi
 
 # perform copy
-./imcopy.cl "$infile" "$outfile" > /dev/null
+./imcopy.cl "$infile" "$outfile"
