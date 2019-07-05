@@ -3,7 +3,7 @@
 # inserts arguments into samplepar template
 
 if [ $# -ne 1 ]; then
-	echo "Usage: $0 <harmonics>"
+	echo "usage: $0 <harmonics>"
 	exit 1
 fi
 

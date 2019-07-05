@@ -3,7 +3,7 @@
 # inserts arguments into geompar template
 
 if [ $# -ne 7 ]; then
-	echo "Usage: $0 <x0> <y0> <ellip0> <pa0> <sma0> <minsma> <maxsma>"
+	echo "usage: $0 <x0> <y0> <ellip0> <pa0> <sma0> <minsma> <maxsma>"
 	exit 1
 fi
 

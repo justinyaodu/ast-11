@@ -3,7 +3,7 @@
 # use sextractor.sh and imcopy.sh to generate pixel mask files
 
 usage() {
-	>&2 echo "Usage: $0 <input.fits> [--clean]"
+	>&2 echo "usage: $0 <input.fits> [--clean]"
 }
 
 # print usage message if number of parameters is incorrect

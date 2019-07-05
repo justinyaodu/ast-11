@@ -7,7 +7,7 @@ source common.sh
 
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 1 ]; then
-	>&2 echo "Usage: $0 <tablefile>"
+	>&2 echo "usage: $0 <tablefile>"
 	exit 1
 fi
 

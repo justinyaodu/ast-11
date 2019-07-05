@@ -6,7 +6,7 @@ source common.sh
 
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 2 ]; then
-	>&2 echo "Usage: $0 <input.fits> <output.fits>"
+	>&2 echo "usage: $0 <input.fits> <output.fits>"
 	exit 1
 fi
 

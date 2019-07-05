@@ -6,7 +6,7 @@ source common.sh
 
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 3 ]; then
-	>&2 echo "Usage: $0 <image_file_1.fits> <image_file_2.fits> <output_image.fits>"
+	>&2 echo "usage: $0 <image_file_1.fits> <image_file_2.fits> <output_image.fits>"
 	exit 1
 fi
 
