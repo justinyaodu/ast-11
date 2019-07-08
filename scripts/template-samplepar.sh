@@ -2,10 +2,9 @@
 
 # inserts arguments into samplepar template
 
-if [ $# -ne 1 ]; then
-	echo "usage: $0 <harmonics>"
-	exit 1
-fi
+source common.sh
+
+[ $# -eq 1 ] || abort "usage: $0 <harmonics>"
 
 harmonics=$1
 

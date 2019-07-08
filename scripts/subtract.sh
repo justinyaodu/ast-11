@@ -5,26 +5,17 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-if [ "$#" -ne 3 ]; then
-	>&2 echo "usage: $0 <image_file_1.fits> <image_file_2.fits> <output_image.fits>"
-	exit 1
-fi
+[ $# -eq 3 ] || abort "usage: $0 <image_file_1.fits> <image_file_2.fits> <output_image.fits>"
 
-infile1="$1"
-infile2="$2"
-outfile="$3"
+image_1="$1"
+image_2="$2"
+output_image="$3"
 
 # abort if input files don't exist
-if [ ! -f "$infile1" ] || [ ! -f "$infile2" ]; then
-	>&2 echo "$0: error: input file does not exist"
-	exit 1
-fi
+assert_exists "$image_1" "$image_2"
 
 # if output file exists, also abort
-if [ -f "$outfile" ]; then
-	>&2 echo "$0: error: output file already exists"
-	exit 1
-fi
+assert_does_not_exist "$output_image"
 
 # perform subtraction
-./subtract.cl "$infile1" "$infile2" "$outfile"
+./subtract.cl "$image_1" "$image_2" "$output_image"

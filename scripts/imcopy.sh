@@ -5,25 +5,16 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-if [ "$#" -ne 2 ]; then
-	>&2 echo "usage: $0 <input.fits> <output.fits>"
-	exit 1
-fi
+[ $# -eq 2 ] || abort "usage: $0 <input_image.fits> <output_image.fits>"
 
-infile="$1"
-outfile="$2"
+input_image="$1"
+output_image="$2"
 
 # abort if input file doesn't exist
-if [ ! -f "$infile" ]; then
-	>&2 echo "$0: error: input file does not exist"
-	exit 1
-fi
+assert_exists "$input_image"
 
 # if output file exists, also abort
-if [ -f "$outfile" ]; then
-	>&2 echo "$0: error: output file already exists"
-	exit 1
-fi
+assert_does_not_exist "$output_image"
 
 # perform copy
-./imcopy.cl "$infile" "$outfile"
+./imcopy.cl "$input_image" "$output_image"

@@ -5,10 +5,7 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-if [ "$#" -ne 4 ]; then
-	>&2 echo "usage: $0 <galaxy-name_filter> <input_image.fits> <output_table.tab> <harmonics>"
-	exit 1
-fi
+[ $# -eq 4 ] || abort "usage: $0 <galaxy-name_filter> <input_image.fits> <output_table.tab> <harmonics>"
 
 galaxy_and_filter="$1"
 image_file="$2"
@@ -16,16 +13,10 @@ table_file="$3"
 harmonics="$4"
 
 # abort if input file doesn't exist
-if [ ! -f "$image_file" ]; then
-	>&2 echo "$0: error: input file does not exist"
-	exit 1
-fi
+assert_exists "$image_file"
 
 # if output file exists, also abort
-if [ -f "$table_file" ]; then
-	>&2 echo "$0: error: output file already exists"
-	exit 1
-fi
+assert_does_not_exist "$table_file"
 
 # generate geompar file
 ./generate-geompar.sh "$galaxy_and_filter" "$image_file"

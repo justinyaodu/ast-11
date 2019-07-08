@@ -2,10 +2,10 @@
 
 # inserts arguments into geompar template
 
-if [ $# -ne 7 ]; then
-	echo "usage: $0 <x0> <y0> <ellip0> <pa0> <sma0> <minsma> <maxsma>"
-	exit 1
-fi
+source common.sh
+
+# print usage message if number of parameters is incorrect
+[ $# -eq 7 ] || abort "usage: $0 <x0> <y0> <ellip0> <pa0> <sma0> <minsma> <maxsma>"
 
 x0=$1
 y0=$2
@@ -15,6 +15,7 @@ sma0=$5
 minsma=$6
 maxsma=$7
 
+# output to file, substituting variables in the correct locations
 cat > uparmisegeompr.par << EOF
 x0,r,h,$x0,1.,INDEF,"initial isophote center X"
 y0,r,h,$y0,1.,INDEF,"initial isophote center Y"
