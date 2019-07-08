@@ -32,8 +32,8 @@ if [ "$clean_option" != "" ]; then
 	fi
 fi
 
-assert-exists "$input_image"
-assert-does-not-exist "$output_image" "$copy_image"
+assert_exists "$input_image"
+assert_does_not_exist "$output_image" "$copy_image"
 
 # create mask
 ./sextractor.sh "$input_image" "$output_image"

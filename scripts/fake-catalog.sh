@@ -10,8 +10,8 @@ source common.sh
 table_file="$1"
 dump_file=".model_table_dump"
 
-assert-exists "$table_file"
-remove-if-exists "$dump_file"
+assert_exists "$table_file"
+remove_if_exists "$dump_file"
 
 # dump table data; replace INDEFs with dummy values
 ./tprint.sh "$table_file" "SMA,ELLIP,PA" | sed -e "s/INDEF/-123.4/g" > "$dump_file"

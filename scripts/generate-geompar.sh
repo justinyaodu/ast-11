@@ -11,7 +11,7 @@ catalog_file="gal_list.cat"
 galaxy_and_filter="$1"
 image_file="$2"
 
-assert-exists "$catalog_file" "$image_file"
+assert_exists "$catalog_file" "$image_file"
 
 # call Python scripts to get properties
 

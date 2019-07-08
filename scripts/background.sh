@@ -11,9 +11,9 @@ source common.sh
 table_file="$1"
 dump_file=".background_table_dump"
 
-assert-exists "$table_file"
+assert_exists "$table_file"
 
-remove-if-exists "$dump_file"
+remove_if_exists "$dump_file"
 
 # dump table data to file
 # discard console output (package import banners and such)
