@@ -1,5 +1,7 @@
 #!/home/irafuser/miniconda2/envs/iraf27/iraf/bin/cl.e -f
 
+# use ISOFIT to generate a galaxy light model
+
 # initialize environment 
 cl < init.cl
 

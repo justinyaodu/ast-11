@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # looks up appropriate initial values for geometric parameters using catalog data
-# and generates reasonable min and max values
 
 # print usage message if number of parameters is incorrect
 if [ "$#" -ne 2 ]; then
@@ -21,7 +20,15 @@ if [ ! -f $image_file ]; then
 fi
 
 # call Python scripts to get properties
+
+# x and y position of galaxy center
+position="$(python -c "import fits_center; fits_center.get_fits_center(\"$image_file\")")"
+
+# ellipticity, position angle, initial sma, min sma, max sma
 shape_properties="$(python -c "import read_catalog; read_catalog.get_properties(\"$galaxy_and_filter\", \"$catalog\")")"
-position="$(python -c "import fits_center; fits_center.get_fits_center(\"$galaxy_and_filter.fits\")")"
+
+# log parameters for debugging purposes
+>&2 echo "x y ell pa sma0 minsma maxsma"
+>&2 echo "$position $shape_properties"
 
 ./template-geompar.sh $position $shape_properties

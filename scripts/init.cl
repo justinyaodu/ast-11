@@ -1,5 +1,7 @@
 #!/home/irafuser/miniconda2/envs/iraf27/iraf/bin/cl.e -f
  
+# initialize the CL environment, similar to what login.cl does
+
 logver = "IRAF V2.16 March 2012"
 
 set	home		= "/home/irafuser/Documents/ast-11/scripts/"
