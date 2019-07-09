@@ -14,7 +14,7 @@ assert_exists "$table_file"
 remove_if_exists "$dump_file"
 
 # dump table data; replace INDEFs with dummy values
-./tprint.sh "$table_file" "SMA,ELLIP,PA" | sed -e "s/INDEF/-123.4/g" > "$dump_file"
+./tprint.sh "$table_file" "SMA,ELLIP,PA,X0,Y0" | sed -e "s/INDEF/-123.4/g" > "$dump_file"
 
 # run Python script to output values
 python -c "import fake_catalog; fake_catalog.get_fake_data(\"$dump_file\")"

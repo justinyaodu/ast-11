@@ -11,7 +11,7 @@ usage_message="usage: $0 <input.fits> [--clean]"
 
 input_image="$1"
 
-[ ${input_image: -13} == "_modsub1.fits" ] || echo-debug "warning: image file name does not end with _modsub1.fits"
+[ ${input_image: -13} == "_modsub1.fits" ] || echo_debug "warning: image file name does not end with _modsub1.fits"
 
 # assuming the input file ends with "_modsub1.fits"
 # this removes those 13 characters

@@ -42,10 +42,21 @@ def get_properties(galaxy_and_filter, catalog):
     for line in parsed_file:
         if (line[1] == galaxy):
             pa  = float(line[pa_index  + offset])
-            sma = float(line[ell_index + offset])
+
+            # conversion factor copied from other script
+            # still unsure about what it represents
+            sma = float(line[ell_index + offset]) / 0.187 * 5
+
             ell = float(line[ell_index + offset])
+
+            # semi-major axis length for ISOFIT to start at; should be inside the galaxy
             sma_initial = sma / 2
+
+            # go all the way to the center
             sma_min = 0
+
+            # factor of two is supposed to make sure the galaxy edges aren't clipped
+            # even if the catalog values are very far off
             sma_max = sma * 2
             print ell, pa, sma_initial, sma_min, sma_max
             return

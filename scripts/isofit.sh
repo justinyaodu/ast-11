@@ -5,7 +5,7 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 4 ] || abort "usage: $0 <galaxy-name_filter> <input_image.fits> <output_table.tab> <harmonics>"
+[ $# -eq 4 ] || abort "usage: $0 <galaxyname_filter> <input_image.fits> <output_table.tab> <harmonics>"
 
 galaxy_and_filter="$1"
 image_file="$2"

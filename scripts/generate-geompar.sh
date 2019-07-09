@@ -5,7 +5,7 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 2 ] || abort "usage: $0 <galaxy-name_filter> <image.fits>"
+[ $# -eq 2 ] || abort "usage: $0 <galaxyname_filter> <image.fits>"
 
 catalog_file="gal_list.cat"
 galaxy_and_filter="$1"
@@ -22,6 +22,6 @@ position="$(python -c "import fits_center; fits_center.get_fits_center(\"$image_
 shape_properties="$(python -c "import read_catalog; read_catalog.get_properties(\"$galaxy_and_filter\", \"$catalog_file\")")"
 
 # log parameters for debugging purposes
-echo-debug "x y ell pa sma0 minsma maxsma: $position $shape_properties"
+echo_debug "x y ell pa sma0 minsma maxsma: $position $shape_properties"
 
 ./template-geompar.sh $position $shape_properties
