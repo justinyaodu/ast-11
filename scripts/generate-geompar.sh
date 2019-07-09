@@ -7,7 +7,7 @@ source common.sh
 # print usage message if number of parameters is incorrect
 [ $# -eq 2 ] || abort "usage: $0 <galaxyname_filter> <image.fits>"
 
-catalog_file="fake_list.cat"
+catalog_file="gal_list.cat"
 galaxy_and_filter="$1"
 image_file="$2"
 

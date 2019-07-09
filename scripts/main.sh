@@ -18,7 +18,7 @@ galaxy_and_filter="$(basename "$original_image" | grep -o "VCC[0-9][0-9][0-9][0-
 assert_exists "$original_image"
 
 # generate first pass light model
-./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "2 3 4"
+./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "2 3 4 5 6"
 
 # create image from first pass light model
 ./cmodel.sh "${name_base}_mod1.tab" "${name_base}_mod1.fits"
@@ -30,7 +30,7 @@ assert_exists "$original_image"
 ./create-mask.sh "${name_base}_modsub1.fits"
 
 # generate first pass light model
-./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "2 3 4"
+./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "2 3 4 5 6"
 
 # create image from second pass light model
 ./cmodel.sh "${name_base}_mod2.tab" "${name_base}_mod2.fits"
