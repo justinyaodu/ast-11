@@ -46,3 +46,6 @@ remove_if_exists() {
 		shift
 	done
 }
+
+# print message when script starts running
+echo_debug "running"

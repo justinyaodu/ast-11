@@ -20,7 +20,7 @@ def get_indices(parsed_file):
             return pa_index, sma_index, ell_index
 
 # prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
-def get_properties(galaxy_and_filter, catalog):
+def get_properties(galaxy_and_filter, catalog, arcsec_to_px):
     # extract galaxy name and filter
     split = galaxy_and_filter.split("_")
     galaxy = split[0]
@@ -43,20 +43,19 @@ def get_properties(galaxy_and_filter, catalog):
         if (line[1] == galaxy):
             pa  = float(line[pa_index  + offset])
 
-            # conversion factor copied from other script
-            # still unsure about what it represents
-            sma = float(line[ell_index + offset]) / 0.187 * 5
+            # conversion factor calculated from image in arcsec_to_px.py
+            sma = float(line[sma_index + offset]) * arcsec_to_px
 
             ell = float(line[ell_index + offset])
 
-            # semi-major axis length for ISOFIT to start at; should be inside the galaxy
-            sma_initial = sma / 2
+            # semi-major axis length for ISOFIT to start at; default of 10 seems to work well
+            sma_initial = 10
 
             # go all the way to the center
             sma_min = 0
 
-            # factor of two is supposed to make sure the galaxy edges aren't clipped
-            # even if the catalog values are very far off
+            # safety factor is supposed to make sure the galaxy edges aren't clipped
+            # even if the catalog values are off
             sma_max = sma * 2
             print ell, pa, sma_initial, sma_min, sma_max
             return
