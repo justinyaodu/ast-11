@@ -6,32 +6,21 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-if [ "$#" -ne 1 ]; then
-	>&2 echo "Usage: $0 <tablefile>"
-	exit 1
-fi
+[ $# -eq 1 ] || abort "usage: $0 <table.tab>"
 
-tablefile="$1"
-dumpfile=".background_table_dump"
+table_file="$1"
+dump_file=".background_table_dump"
 
-# if table file doesn't exist, abort
-if [ ! -f "$tablefile" ]; then
-	>&2 echo "$0: error: table file does not exist"
-	exit 1
-fi
+assert_exists "$table_file"
 
-# if dump file exists, remove it
-if [ -f "$dumpfile" ]; then
-	>&2 echo "$0: warning: dump file already exists, removing"
-	rm "$dumpfile"
-fi
+remove_if_exists "$dump_file"
 
 # dump table data to file
 # discard console output (package import banners and such)
-"./background.cl" "$tablefile" "$dumpfile" > /dev/null
+./background.cl "$table_file" "$dump_file" > /dev/null
 
 # print last line, trim whitespace
-tail -n 1 < "$dumpfile" | xargs
+tail -n 1 < "$dump_file" | xargs
 
 # delete dump file
-rm "$dumpfile"
+rm "$dump_file"

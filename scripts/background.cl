@@ -1,5 +1,8 @@
 #!/home/irafuser/miniconda2/envs/iraf27/iraf/bin/cl.e -f
 
+# dump intensity data from ISOFIT model, so the outermost intensity value
+# can be used as the background light value
+
 # initialize environment 
 cl < init.cl
 

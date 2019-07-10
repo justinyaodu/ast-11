@@ -1,5 +1,7 @@
 #!/home/irafuser/miniconda2/envs/iraf27/iraf/bin/cl.e -f
 
+# uses imarith to subtract two images
+
 # initialize environment 
 cl < init.cl
 

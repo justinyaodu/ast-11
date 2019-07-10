@@ -1,5 +1,7 @@
 #!/home/irafuser/miniconda2/envs/iraf27/iraf/bin/cl.e -f
 
+# uses imcopy to copy an image
+
 # initialize environment
 cl < init.cl
 
