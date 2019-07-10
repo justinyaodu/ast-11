@@ -20,7 +20,7 @@ def get_indices(parsed_file):
             return pa_index, sma_index, ell_index
 
 # prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
-def get_properties(galaxy_and_filter, catalog, arcsec_to_px):
+def get_properties(galaxy_and_filter, catalog):
     # extract galaxy name and filter
     split = galaxy_and_filter.split("_")
     galaxy = split[0]
@@ -43,8 +43,8 @@ def get_properties(galaxy_and_filter, catalog, arcsec_to_px):
         if (line[1] == galaxy):
             pa  = float(line[pa_index  + offset])
 
-            # conversion factor calculated from image in arcsec_to_px.py
-            sma = float(line[sma_index + offset]) * arcsec_to_px
+            # convert from arcseconds to pixels
+            sma = float(line[sma_index + offset]) / 0.187
 
             ell = float(line[ell_index + offset])
 
