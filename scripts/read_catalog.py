@@ -56,6 +56,6 @@ def get_properties(galaxy_and_filter, catalog):
 
             # safety factor is supposed to make sure the galaxy edges aren't clipped
             # even if the catalog values are off
-            sma_max = sma * 2
+            sma_max = sma * 5
             print ell, pa, sma_initial, sma_min, sma_max
             return
