@@ -11,17 +11,16 @@ catalog_file="gal_list.cat"
 galaxy_and_filter="$1"
 image_file="$2"
 
-assert_exists "$catalog_file" "$image_file"
-
 # call Python scripts to get properties
 
-# x and y position of galaxy center
-position="$(python -c "import fits_center; fits_center.get_fits_center(\"$image_file\")")"
-
 # ellipticity, position angle, initial sma, min sma, max sma
+assert_exists "$catalog_file"
 shape_properties="$(python -c "import read_catalog; read_catalog.get_properties(\"$galaxy_and_filter\", \"$catalog_file\")")"
+echo_debug "ell pa sma0 minsma maxsma: $shape_properties"
 
-# log parameters for debugging purposes
-echo_debug "x y ell pa sma0 minsma maxsma: $position $shape_properties"
+# x and y position of galaxy center
+assert_exists "$image_file"
+position="$(python -c "import fits_center; fits_center.get_fits_center(\"$image_file\")")"
+echo_debug "x y: $position"
 
 ./template-geompar.sh $position $shape_properties

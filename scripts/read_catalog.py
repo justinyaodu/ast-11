@@ -1,3 +1,4 @@
+import sys
 import re
 import numpy as np
 
@@ -42,11 +43,23 @@ def get_properties(galaxy_and_filter, catalog):
     for line in parsed_file:
         if (line[1] == galaxy):
             pa  = float(line[pa_index  + offset])
-
+            if (pa == -100.0):
+                print >> sys.stderr, "warning: no pa in catalog"
+                pa = 0
+            
+            sma = float(line[sma_index + offset])
+            if (sma == -100.0):
+                print >> sys.stderr, "warning: no sma in catalog"
+                sma = 15
+            print >> sys.stderr, "sma in arcsec is", sma
+            
             # convert from arcseconds to pixels
-            sma = float(line[sma_index + offset]) / 0.187
+            sma /= 0.187
 
             ell = float(line[ell_index + offset])
+            if (ell == -100.0):
+                print >> sys.stderr, "warning: no ell in catalog"
+                ell = 0.2
 
             # semi-major axis length for ISOFIT to start at; default of 10 seems to work well
             sma_initial = 10
