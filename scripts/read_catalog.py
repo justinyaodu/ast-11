@@ -51,6 +51,7 @@ def get_properties(galaxy_and_filter, catalog):
             if (sma == -100.0):
                 print >> sys.stderr, "warning: no sma in catalog"
                 sma = 15
+            print >> sys.stderr, "sma in arcsec is", sma
             
             # convert from arcseconds to pixels
             sma /= 0.187
