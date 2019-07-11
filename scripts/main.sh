@@ -18,10 +18,18 @@ galaxy_and_filter="$(basename "$original_image" | grep -o "VCC[0-9][0-9][0-9][0-
 assert_exists "$original_image"
 
 # generate first pass light model
-./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "2 3 4"
+if using_isofit; then
+	./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "2 3 4"
+else
+	./ellipse.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" ""
+fi
 
 # create image from first pass light model
-./cmodel.sh "${name_base}_mod1.tab" "${name_base}_mod1.fits"
+if using_isofit; then
+	./cmodel.sh "${name_base}_mod1.tab" "${name_base}_mod1.fits"
+else
+	./bmodel.sh "${name_base}_mod1.tab" "${name_base}_mod1.fits"
+fi
 
 # perform subtraction
 ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${name_base}_modsub1.fits"
@@ -29,11 +37,19 @@ assert_exists "$original_image"
 # generate mask for remaining bright objects
 ./create-mask.sh "${name_base}_modsub1.fits"
 
-# generate first pass light model
-./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "2 3 4"
+# generate second pass light model
+if using_isofit; then
+	./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "2 3 4"
+else
+	./ellipse.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" ""
+fi
 
 # create image from second pass light model
-./cmodel.sh "${name_base}_mod2.tab" "${name_base}_mod2.fits"
+if using_isofit; then
+	./cmodel.sh "${name_base}_mod2.tab" "${name_base}_mod2.fits"
+else
+	./bmodel.sh "${name_base}_mod2.tab" "${name_base}_mod2.fits"
+fi
 
 # perform final subtraction
 ./subtract.sh "$original_image" "${name_base}_mod2.fits" "${name_base}_modsub2.fits"

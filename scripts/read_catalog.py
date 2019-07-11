@@ -49,6 +49,8 @@ def read_properties(galaxy_and_filter, catalog):
 
 # prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
 def get_properties(galaxy_and_filter, catalog):
+    ell, pa, sma = read_properties(galaxy_and_filter, catalog)
+
     if (ell == -100.0):
         print >> sys.stderr, "warning: no ell in catalog"
         ell = 0.2

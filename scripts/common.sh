@@ -50,6 +50,11 @@ remove_if_exists() {
 	done
 }
 
+# function which returns 0 if using isofit
+using_isofit() {
+	[ -f ".using-isofit" ]
+}
+
 # print error message if we suspect that the user has not activated the conda environment
 [ -n "$(type -P cl)" ] || abort "conda environment is not activated"
 
