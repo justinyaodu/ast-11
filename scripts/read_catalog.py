@@ -20,8 +20,8 @@ def get_indices(parsed_file):
                 elif line[x] == "u_Ell"       : ell_index = x
             return pa_index, sma_index, ell_index
 
-# prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
-def get_properties(galaxy_and_filter, catalog):
+# returns the ellipticity, position angle, and SMA in arcsec
+def read_properties(galaxy_and_filter, catalog):
     # extract galaxy name and filter
     split = galaxy_and_filter.split("_")
     galaxy = split[0]
@@ -42,33 +42,39 @@ def get_properties(galaxy_and_filter, catalog):
     
     for line in parsed_file:
         if (line[1] == galaxy):
-            pa  = float(line[pa_index  + offset])
-            if (pa == -100.0):
-                print >> sys.stderr, "warning: no pa in catalog"
-                pa = 0
-            
-            sma = float(line[sma_index + offset])
-            if (sma == -100.0):
-                print >> sys.stderr, "warning: no sma in catalog"
-                sma = 15
-            print >> sys.stderr, "sma in arcsec is", sma
-            
-            # convert from arcseconds to pixels
-            sma /= 0.187
-
             ell = float(line[ell_index + offset])
-            if (ell == -100.0):
-                print >> sys.stderr, "warning: no ell in catalog"
-                ell = 0.2
+            pa  = float(line[pa_index  + offset])
+            sma = float(line[sma_index + offset])
+            return ell, pa, sma
 
-            # semi-major axis length for ISOFIT to start at; default of 10 seems to work well
-            sma_initial = 10
+# prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
+def get_properties(galaxy_and_filter, catalog):
+    ell, pa, sma = read_properties(galaxy_and_filter, catalog)
 
-            # go all the way to the center
-            sma_min = 0
+    if (ell == -100.0):
+        print >> sys.stderr, "warning: no ell in catalog"
+        ell = 0.2
 
-            # safety factor is supposed to make sure the galaxy edges aren't clipped
-            # even if the catalog values are off
-            sma_max = sma * 5
-            print ell, pa, sma_initial, sma_min, sma_max
-            return
+    if (pa == -100.0):
+        print >> sys.stderr, "warning: no pa in catalog"
+        pa = 0
+    
+    print >> sys.stderr, "sma in arcsec is", sma
+    if (sma == -100.0):
+        print >> sys.stderr, "warning: no sma in catalog"
+        sma = 15
+    
+    # convert from arcseconds to pixels
+    sma /= 0.187
+
+    # semi-major axis length for ISOFIT to start at; default of 10 seems to work well
+    sma_initial = 10
+
+    # go all the way to the center
+    sma_min = 0
+
+    # safety factor is supposed to make sure the galaxy edges aren't clipped
+    # even if the catalog values are off
+    sma_max = sma * 5
+    print ell, pa, sma_initial, sma_min, sma_max
+    return
