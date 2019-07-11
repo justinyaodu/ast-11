@@ -4,9 +4,6 @@
 
 source common.sh
 
-# print error message if we suspect that the user has not activated the conda environment
-[ -n "$(type -P ds9)" ] || abort "conda environment is not activated"
-
 # print usage message if number of parameters is incorrect
 [ $# -eq 1 ] || abort "usage: $0 <original_image.fits>"
 

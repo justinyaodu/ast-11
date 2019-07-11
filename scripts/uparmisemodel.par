@@ -1,7 +1,7 @@
 table,s,a,"",,,"isophote table"
 output,s,a,"",,,"name of output image"
 parent,s,a,"",,,"name of parent image"
-backgr,r,h,8.033667,,,"background level"
+backgr,r,h,4.986442,,,"background level"
 highar,b,h,yes,,,"add higher harmonics ?"
 verbose,b,h,yes,,,
 mode,s,h,"al",,,
