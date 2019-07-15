@@ -1,10 +1,16 @@
 from astropy.io import fits
 
 # find the center of a FITS image
-def fits_center(fits)
-    x0 = int((fits[0].header[3])/2)
-    y0 = int((fits[0].header[4])/2)
+def fits_center(fits):
+    x0, y0 = fits_size(fits)
+    x0 /= 2
+    y0 /= 2
     return x0, y0
+
+def fits_size(fits):
+    width = int((fits[0].header[3]))
+    height = int((fits[0].header[4]))
+    return width, height
 
 # print the center of a FITS image
 def get_fits_center(filename):
