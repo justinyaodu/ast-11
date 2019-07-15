@@ -4,12 +4,13 @@
 
 source common.sh
 
-usage_message="usage: $0 <input.fits> [--clean]"
+usage_message="usage: $0 <input.fits> <threshold> [--clean]"
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || [ $# -eq 2 ] || abort "$usage_message"
+[ $# -eq 2 ] || [ $# -eq 3 ] || abort "$usage_message"
 
 input_image="$1"
+threshold="$2"
 
 [ ${input_image: -13} == "_modsub1.fits" ] || abort "error: image file name does not end with _modsub1.fits"
 
@@ -20,7 +21,7 @@ output_image="${input_image::-13}_seg.fits"
 # removes those same characters, but ends with .fits.pl instead
 copy_image="${input_image::-13}.fits.pl"
 
-clean_option="$2"
+clean_option="$3"
 
 # if option specified
 if [ "$clean_option" != "" ]; then
@@ -38,7 +39,7 @@ assert_exists "$input_image"
 assert_does_not_exist "$output_image" "$copy_image"
 
 # create mask
-./sextractor.sh "$input_image" "$output_image"
+./sextractor.sh "$input_image" "$output_image" "$threshold"
 
 # copy somegalaxy_seg.fits to somegalaxy.fits.pl
 ./imcopy.sh "$output_image" "$copy_image"
