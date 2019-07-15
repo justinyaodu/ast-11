@@ -17,7 +17,7 @@ hellip,b,h,no,,,"hold ellipticity fixed ?"
 hpa,b,h,no,,,"hold position angle fixed ?"
 wander,r,h,INDEF,0.,,"maximum wander in successive isophote centers"
 maxgerr,r,h,0.5,0.,INDEF,"maximum acceptable gradient relative error"
-olthresh,r,h,0.,$ol_threshold,INDEF,"object locator\'s k-sigma threshold"
+olthresh,r,h,$ol_threshold,0.,INDEF,"object locator\'s k-sigma threshold"
 soft,b,h,no,,,"soft stop ?"
 mode,s,h,"al",,,
 EOF
