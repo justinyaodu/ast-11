@@ -28,12 +28,12 @@ def check_masking(mask_image):
     for x in range(0,height):
       for y in range(0,width):
         if point_in_ellipse(x_cor[index],y_cor[index],ellipticity[index],pos_ang[index],sma[index],x,y):
-          countEllipse++
+          countEllipse += 1
           if data[y,x]!=0:
-              countMasked++  
+              countMasked += 1
     if countMasked/countEllipse <= 0.4:      
-      count++
-    index++  
+      count += 1
+    index += 1 
   percentage = count/len(x_cor) 
   if percentage > 0.7: 
     sys.exit(0)
