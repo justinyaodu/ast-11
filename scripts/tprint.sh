@@ -10,7 +10,7 @@ source common.sh
 table_file="$1"
 columns="$2"
 
-# abort if input files don't exist
+# abort if table doesn't exist
 assert_exists "$table_file"
 
 # print table
