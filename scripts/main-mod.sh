@@ -19,7 +19,7 @@ assert_exists "$original_image"
 
 # generate first pass light model
 if using_isofit; then
-	./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "2 3 4" "1"
+	./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "2 3 4" "0.2"
 else
 	./ellipse.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod1.tab" "" "1"
 fi
@@ -39,7 +39,7 @@ fi
 
 # generate second pass light model
 if using_isofit; then
-	./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "2 3 4" "1"
+	./isofit.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "2 3 4" "0.2"
 else
 	./ellipse.sh "$galaxy_and_filter" "$original_image" "${name_base}_mod2.tab" "" "1"
 fi
