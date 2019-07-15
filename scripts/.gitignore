@@ -2,4 +2,7 @@ sextractor-catalog.cat
 uparmisegeompr.par
 uparmisesamplr.par
 uparmisecontrr.par
+uparmisemodel.par
 .using-isofit
+uparmttstinfo.par
+uparmttstabpar.par
