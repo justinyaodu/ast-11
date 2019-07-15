@@ -11,5 +11,5 @@ table="$1"
 assert_exists "$table"
 
 # call the Python script
-./tprint.sh "$table" "X0,Y0,ELLIP,PA,SMA" | sed -e "s/INDEF/-10000/g" | python -c "import excessive_mask_check; excessive_mask_check.METHOD_NAME()"
+./tprint.sh "$table" "X0,Y0,ELLIP,PA,SMA" | sed -e "s/INDEF/-10000/g" | python -c "import excessive_mask_check; excessive_mask_check.check_masking()"
   
