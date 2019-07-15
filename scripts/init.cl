@@ -16,4 +16,7 @@ stty xterm
 
 set	imextn		= "oif:imh fxf:fits,fit fxb:fxb plf:pl qpf:qp stf:hhh,??h"
 
+# allow these external commands to be run from within CL scripts
+task $sed = "$foreign"
+
 showtype = yes
