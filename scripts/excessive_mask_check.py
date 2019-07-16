@@ -189,10 +189,7 @@ class MaskChecker:
  
             # determine if fraction of masked pixels is satisfactory
             if self.count_masked / self.count_in_ellipse <= 0.15:
-                print "  good isophote"
                 self.count_good_isophotes += 1
-            else:
-                print "  bad isophote"
         
         # determine if fraction of good isophotes is satisfactory
         print str(self.count_good_isophotes) + " of " + str(self.count_isophotes) + " isophotes are good"
