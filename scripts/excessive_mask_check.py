@@ -5,6 +5,29 @@ import fits_center
 import math
 from astropy.io import fits
 
+class Ellipse:
+    def __init__(self, x0, y0, ell, pa, sma):
+        self.x0 = x0
+        self.y0 = y0
+        self.sin_angle = math.sin(pa + 90)
+        self.cos_angle = math.cos(pa + 90)
+        self.smaj_squared = math.pow(sma, 2)
+        self.smin_squared = math.pow(sma * (1 - ell), 2)
+
+    def contains_point(self, x, y):
+        # prevent division by zero
+        if (self.smaj_squared == 0):
+            return x == self.x0 and y == self.y0
+
+        # translate test point so that we can pretend the ellipse is centered at the origin
+        x -= self.x0
+        y -= self.y0
+
+        # check whether point is in rotated ellipse
+
+        return (math.pow(x * self.cos_angle + y * self.sin_angle, 2) / self.smaj_squared
+              + math.pow(x * self.sin_angle - y * self.cos_angle, 2) / self.smin_squared) < 1
+
 # check to see if masking is excessive
 def check_masking(mask_filename):
     mask_fits = fits.open(mask_filename)
@@ -27,6 +50,7 @@ def check_masking(mask_filename):
     count_good_isophotes = 0
     width, height = fits_center.fits_size(mask_fits)
     for i in range(len(x0)):
+        isophote = Ellipse(x0[i], y0[i], ell[i], pa[i], sma[i])
         count_in_ellipse = 0
         count_masked     = 0
 
@@ -39,7 +63,7 @@ def check_masking(mask_filename):
         # limit the number of pixels which are checked
         for x in range(min_x, max_x):
             for y in range(min_y, max_y):
-                if point_in_ellipse(x0[i], y0[i], ell[i], pa[i], sma[i], x, y):
+                if isophote.contains_point(x, y):
                     count_in_ellipse += 1
                     if data[y, x] != 0:
                         count_masked += 1
@@ -55,29 +79,8 @@ def check_masking(mask_filename):
             count_good_isophotes += 1
     
     # determine if fraction of good isophotes is satisfactory
+    print str(good_isophotes) + " of " + str(len(x0)) + " isophotes are good"
     if count_good_isophotes / len(x0) > 0.7:
         sys.exit(0)
     else:
         sys.exit(1)
-                  
-# test to see if the tested point is in the isophote ellipse                   
-def point_in_ellipse(x0, y0, ell, pa, smaj, x, y):
-
-    # prevent division by zero
-    if (smaj == 0):
-        return x == x0 and y == y0
-
-    # calculate semi-minor axis length
-    smin = smaj * (1 - ell)
-
-    # translate everything so that ellipse is centered at the origin
-    x -= x0
-    y -= y0
-
-    # convert position angle to rotation CCW from x-axis
-    angle = 90 + pa
-
-    # check whether point is in rotated ellipse
-
-    return (math.pow(x * math.cos(angle) + y * math.sin(angle), 2) / math.pow(smaj, 2)
-          + math.pow(x * math.sin(angle) - y * math.cos(angle), 2) / math.pow(smin, 2)) < 1
