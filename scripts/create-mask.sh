@@ -43,15 +43,12 @@ threshold="0.5"
 # create mask
 ./sextractor.sh "$input_image" "$output_image" "$threshold"
 
-read
-
 # while image is overly masked, increase the threshold and try again
 while ! ./excessive-mask-check.sh "$model_table" "$output_image"; do
 	rm "$output_image"
 	threshold="$(bc -l <<< "$threshold + 0.5")"
 	echo_debug "masking deemed too aggressive, increasing threshold to $threshold"
 	./sextractor.sh "$input_image" "$output_image" "$threshold"
-	read
 done
 
 # copy somegalaxy_seg.fits to somegalaxy.fits.pl
