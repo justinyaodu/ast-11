@@ -1,3 +1,4 @@
+from __future__ import division
 import sys
 import re
 import numpy as np
@@ -79,7 +80,7 @@ def check_masking(mask_filename):
             count_good_isophotes += 1
     
     # determine if fraction of good isophotes is satisfactory
-    print str(good_isophotes) + " of " + str(len(x0)) + " isophotes are good"
+    print str(count_good_isophotes) + " of " + str(len(x0)) + " isophotes are good"
     if count_good_isophotes / len(x0) > 0.7:
         sys.exit(0)
     else:
