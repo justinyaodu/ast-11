@@ -24,7 +24,7 @@ print_ellipse_line() {
 	pa=$(bc -l <<< "90 + $pa" | head -c 6)
 
 	# print region file line, replacing any INDEFs with zeroes
-	line="ellipse($x,$y,$smaj,$smin,$pa) #text={$intens}"
+	line="ellipse($x,$y,$smaj,$smin,$pa) #text={$row_num}"
 	line="$(sed -e "s/INDEF/0/g" <<< "$line")"
 	echo "$line"
 }

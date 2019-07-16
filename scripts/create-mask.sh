@@ -38,7 +38,7 @@ fi
 assert_exists "$input_image"
 assert_does_not_exist "$output_image" "$copy_image"
 
-threshold="0.5"
+threshold="1.5"
 
 # create mask
 ./sextractor.sh "$input_image" "$output_image" "$threshold"
