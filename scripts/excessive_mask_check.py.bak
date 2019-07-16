@@ -26,23 +26,38 @@ def check_masking(mask_filename):
     # count_good_isophotes is to count how many of the isophotes pass the test (if enough don't pass, then the mask = bad)
     count_good_isophotes = 0
     width, height = fits_center.fits_size(mask_fits)
+    
+    row_min_scanned = np.full(height, -1)
+    row_max_scanned = np.full(height, -1)
+
+    count_in_ellipse = 0
+    count_masked     = 0
     for i in range(len(x0)):
-        count_in_ellipse = 0
-        count_masked     = 0
 
-        min_x = max(0, int(x0[i] - sma[i] - 2))
-        max_x = min(width, int(x0[i] + sma[i] + 2))
+        for y in range(max(0, int(y0 - sma[i] - 2)), min(height, int(y0 + sma[i] + 2))):
 
-        min_y = max(0, int(y0[i] - sma[i] - 2))
-        max_y = min(width, int(y0[i] + sma[i] + 2))
+            # if row has never been scanned
+            if row_max_scanned[y] == -1:
+                # scan entire row
+                for x in range(0, width):
+                    if point_in_ellipse(x0[i], y0[i], ell[i], pa[i], sma[i], x, y):
+                        # set min scan index if not set
+                        if row_min_scanned[y] == -1: row_min_scanned[y] = x
+                        count_in_ellipse += 1
+                    
+            else: start_x = row_max_scanned(y) + 1
 
-        # limit the number of pixels which are checked
-        for x in range(min_x, max_x):
-            for y in range(min_y, max_y):
+            for x in range(start_x, width):
                 if point_in_ellipse(x0[i], y0[i], ell[i], pa[i], sma[i], x, y):
                     count_in_ellipse += 1
+                    row_max_scanned[y] = x
                     if data[y, x] != 0:
                         count_masked += 1
+                else:
+                    break
+
+            
+                    
         print "isophote " + str(i) + ": " + str(count_masked) + " of " + str(count_in_ellipse) + " masked"
 
         # skip this isophote if there are no pixels in it
@@ -59,7 +74,7 @@ def check_masking(mask_filename):
         sys.exit(0)
     else:
         sys.exit(1)
-                  
+
 # test to see if the tested point is in the isophote ellipse                   
 def point_in_ellipse(x0, y0, ell, pa, smaj, x, y):
 

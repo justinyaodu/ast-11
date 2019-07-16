@@ -3,7 +3,7 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "usage: $0 <table.tab> <mask.fits>"
+[ $# -eq 2 ] || abort "usage: $0 <table.tab> <mask.fits>"
 
 table="$1"
 mask_image="$2"

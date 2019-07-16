@@ -35,8 +35,7 @@ fi
 ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${name_base}_modsub1.fits"
 
 # generate mask for remaining bright objects
-# TODO have threshold decrease if mask is not good
-./create-mask.sh "${name_base}_modsub1.fits" "3.0"
+./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"
 
 # generate second pass light model
 if using_isofit; then

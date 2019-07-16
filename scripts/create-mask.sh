@@ -4,13 +4,13 @@
 
 source common.sh
 
-usage_message="usage: $0 <input.fits> <threshold> [--clean]"
+usage_message="usage: $0 <input.fits> <model.tab> [--clean]"
 
 # print usage message if number of parameters is incorrect
 [ $# -eq 2 ] || [ $# -eq 3 ] || abort "$usage_message"
 
 input_image="$1"
-threshold="$2"
+model_table="$2"
 
 [ ${input_image: -13} == "_modsub1.fits" ] || abort "error: image file name does not end with _modsub1.fits"
 
@@ -38,8 +38,21 @@ fi
 assert_exists "$input_image"
 assert_does_not_exist "$output_image" "$copy_image"
 
+threshold="0.5"
+
 # create mask
 ./sextractor.sh "$input_image" "$output_image" "$threshold"
+
+read
+
+# while image is overly masked, increase the threshold and try again
+while ! ./excessive-mask-check.sh "$model_table" "$output_image"; do
+	rm "$output_image"
+	threshold="$(bc -l <<< "$threshold + 0.5")"
+	echo_debug "masking deemed too aggressive, decreasing threshold to $threshold"
+	./sextractor.sh "$input_image" "$output_image" "$threshold"
+	read
+done
 
 # copy somegalaxy_seg.fits to somegalaxy.fits.pl
 ./imcopy.sh "$output_image" "$copy_image"
