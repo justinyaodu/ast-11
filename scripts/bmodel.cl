@@ -18,6 +18,6 @@ stsdas
 analysis.isophote
 
 # create model
-printf("bmodel(table=\"%s\", output=\"%s\", backgr=%f, highar=no, verbose=yes, interp=\"linear\")", infile, outfile, background) | cl
+printf("bmodel(table=\"%s\", output=\"%s\", backgr=%f, highar=no, verbose=yes, interp=\"spline\")", infile, outfile, background) | cl
 
 logout
