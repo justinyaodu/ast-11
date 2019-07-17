@@ -11,7 +11,7 @@ ol_threshold=$1
 cat > uparmisecontrr.par << EOF
 conver,r,h,0.05,0.,,"convergency criterion (maximum harmonic amplitude)"
 minit,i,h,10,1,INDEF,"minimun no. of iterations at each sma"
-maxit,i,h,50,2,INDEF,"maximun no. of iterations at each sma"
+maxit,i,h,100,2,INDEF,"maximun no. of iterations at each sma"
 hcenter,b,h,no,,,"hold center fixed ?"
 hellip,b,h,no,,,"hold ellipticity fixed ?"
 hpa,b,h,no,,,"hold position angle fixed ?"
