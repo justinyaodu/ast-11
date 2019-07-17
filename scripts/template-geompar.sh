@@ -28,7 +28,7 @@ step,r,h,0.1,0.001,INDEF,"sma step between successive ellipses"
 linear,b,h,no,,,"linear sma step ?"
 maxrit,r,h,INDEF,0.,INDEF,"maximum sma length for iterative mode"
 recenter,b,h,yes,,,"allows finding routine to re-center x0-y0 ?"
-xylearn,b,h,yes,,,"updates pset with new x0-y0 ?"
+xylearn,b,h,no,,,"updates pset with new x0-y0 ?"
 physical,b,h,yes,,,"physical coordinate system ?"
 mode,s,h,"al",,,
 EOF
