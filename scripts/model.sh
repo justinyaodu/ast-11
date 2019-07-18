@@ -12,6 +12,8 @@ table_file="$1"
 # output image has the same name as the table file, but with a .fits extension
 output_image="$(strip_extension "$table_file").fits"
 
+log_file="$output_image.log"
+
 # abort if input file doesn't exist
 assert_exists "$table_file"
 
@@ -23,7 +25,7 @@ background="$(./background.sh "$table_file")"
 
 # create model, running appropriate cl script
 if using_isofit; then
-	./cmodel.cl "$table_file" "$output_image" "$background"
+	run_and_log "$log_file" ./cmodel.cl "$table_file" "$output_image" "$background"
 else
-	./bmodel.cl "$table_file" "$output_image" "$background"
+	run_and_log "$log_file" ./bmodel.cl "$table_file" "$output_image" "$background"
 fi

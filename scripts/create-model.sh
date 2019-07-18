@@ -46,10 +46,10 @@ while :; do
 		# error fitting harmonics
 		2)
 			# if already at minimum harmonics, exit indicating error
-			if [ "$harmonics" = "2 3 4" ]; then abort "fit failed"; fi
+			[ "$harmonics" = "2 3 4" ] && abort "fit failed"
 
 			# decrease the number of harmonics (remove the last two terms)
-			harmonics="$(sed -e "s/ [0-9] [0-9]//g" <<< "$harmonics")"
+			harmonics="$(sed -e 's/ [0-9] [0-9]$//g' <<< "$harmonics")"
 			echo_debug "using harmonics $harmonics"
 			
 			# try again
