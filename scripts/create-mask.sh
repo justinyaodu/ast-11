@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# use sextractor.sh and imcopy.sh to generate pixel mask files
+# use sextractor-mask.sh and imcopy.sh to generate pixel mask files
 
 source common.sh
 
@@ -39,16 +39,30 @@ assert_exists "$input_image"
 assert_does_not_exist "$output_image" "$copy_image"
 
 threshold="1.5"
+iterations="0"
 
 # create mask
-./sextractor.sh "$input_image" "$output_image" "$threshold"
+./sextractor-mask.sh "$input_image" "$output_image" "$threshold"
 
 # while image is overly masked, increase the threshold and try again
 while ! ./excessive-mask-check.sh "$model_table" "$output_image"; do
-	rm "$output_image"
+
+	# if iterated too many times, give up and continue with current mask
+	(( iterations++ ))
+	if [ "$iterations" -eq 7 ]; then
+		echo_debug "too many remasking iterations, giving up and using current mask"
+		break
+	fi
+
+	# increase threshold
 	threshold="$(bc -l <<< "$threshold + 0.5")"
 	echo_debug "masking deemed too aggressive, increasing threshold to $threshold"
-	./sextractor.sh "$input_image" "$output_image" "$threshold"
+
+	# remove output file
+	rm "$output_image"
+
+	# try masking again with increased threshold
+	./sextractor-mask.sh "$input_image" "$output_image" "$threshold"
 done
 
 # copy somegalaxy_seg.fits to somegalaxy.fits.pl
