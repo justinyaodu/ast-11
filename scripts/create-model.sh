@@ -26,10 +26,14 @@ ol_threshold="1"
 while :; do
 	./fit.sh "$(get_galaxy_and_filter "$original_image")" "$original_image" "$output_table" "$harmonics" "$ol_threshold"
 	case "$?" in
-		# success
+		# fit.sh did not give any error codes; now check if table data is valid
 		0)
-			echo_debug "fit successful"
-			break
+			if ./good-fit.sh "$output_table"; then
+				echo_debug "output table looks good"
+				break
+			else
+				abort "output table is likely bad"
+			fi
 			;;
 		# could not find object center
 		1)

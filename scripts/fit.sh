@@ -33,13 +33,16 @@ else
 	run_and_log "$log_file" ./ellipse.cl "$image_file" "$table_file"
 fi
 
-# exit indicating success if table file was created
-[ -f "$table_file" ] && exit 0
-
-# otherwise, inspect log to see what went wrong
+# inspect logs for error messages
 
 # exit code 1 if could not find object center
 if grep -q "ERROR: Can not find object center." "$log_file"; then exit 1; fi
 
-# exit code 2 for harmonic fit diverged, floating point errors, etc.
+# exit code 2 for harmonics-related errors
+if grep -q "Error in upper harmonic fit. Please, verify output table."; then exit 2; fi
+
+# exit indicating success if table file was created
+[ -f "$table_file" ] && exit 0
+
+# exit code 2 for floating point errors, segfaults, etc.
 exit 2
