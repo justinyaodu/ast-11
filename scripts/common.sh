@@ -13,7 +13,7 @@ echo_debug() {
 
 # echo_debug and exit with error code
 abort() {
-	echo_debug $@
+	echo_debug "$@"
 	exit 1
 }
 
@@ -38,7 +38,7 @@ assert_does_not_exist() {
 }
 
 assert_successful() {
-	$@ || abort "fatal error, exiting"
+	"$@" || abort "fatal error, exiting"
 }
 
 # if files already exist, remove them and print a warning
@@ -70,6 +70,24 @@ strip_extension() {
 	sed -e 's/\.[^.]*$//g' <<< "$1"
 }
 
+# run a command and log output to a file as well
+run_and_log() {
+	# first argument is the log file
+	log_file="$1"
+	remove_if_exists "$log_file"
+
+	# remove the first argument from the argument list
+	shift
+
+	# run the provided command and arguments,
+	# saving stdout and stderr to the log file
+	{
+		"$@" 2>&1
+	} | tee "$log_file"
+
+	# return the exit code of the command which was run
+	return "${PIPESTATUS[0]}"
+}
 # print error message if we suspect that the user has not activated the conda environment
 # do this by checking for the presence of the IRAF cl executable
 [ -n "$(type -P cl)" ] || abort "conda environment is not activated"

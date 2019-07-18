@@ -9,9 +9,6 @@ source common.sh
 
 original_image="$1"
 
-# get directory of original image
-work_dir="$(dirname "$original_image")"
-
 # strip .fits extension, but retain galaxy name and directory information
 # e.g. "/some/path/VCC1827_i.fits" becomes "/some/path/VCC1827_i"
 name_base=${original_image::-5}
@@ -29,16 +26,16 @@ galaxy_and_filter="$(get_galaxy_and_filter "$original_image")"
 assert_exists "$original_image"
 
 # generate first pass light model
-assert_successful ./create-model.sh "$original_image"
+assert_successful ./create-model.sh "$original_image" "1"
 
 # perform subtraction
 assert_successful ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${name_base}_modsub1.fits"
 
 # generate mask for remaining bright objects
-assert_successful ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"
+assert_successful run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"
 
 # generate second pass light model
-assert_successful ./create-model.sh "$original_image"
+assert_successful ./create-model.sh "$original_image" "2"
 
 # perform final subtraction
 assert_successful ./subtract.sh "$original_image" "${name_base}_mod2.fits" "${name_base}_modsub2.fits"

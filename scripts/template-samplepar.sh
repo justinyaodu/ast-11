@@ -6,7 +6,7 @@ source common.sh
 
 [ $# -eq 1 ] || abort "usage: $0 <harmonics>"
 
-harmonics=$1
+harmonics="$1"
 
 cat > uparmisesamplr.par << EOF
 integrmode,s,h,"bi-linear",bi-linear|mean|median,,"area integration mode"

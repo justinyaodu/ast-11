@@ -4,31 +4,65 @@
 
 source common.sh
 
-usage_message="usage: $0 <original_image.fits>"
+usage_message="usage: $0 <original_image.fits> <iteration number>"
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "$usage_message"
+[ $# -eq 2 ] || abort "$usage_message"
 
 original_image="$1"
 assert_exists "$original_image"
 
+iteration="$2"
+
 filename_stripped="$(strip_extension "$original_image")"
 
-if [ -f "${filename_stripped}_mod1.tab" ]; then
-	echo_debug "first pass model files already exist; creating second pass model"
-	output_table="${filename_stripped}_mod2.tab"
-else
-	echo_debug "first pass model files do not exist; creating first pass model"
-	output_table="${filename_stripped}_mod1.tab"
-fi
-
+output_table="${filename_stripped}_mod$iteration.tab"
 assert_does_not_exist "$output_table"
 
 # run ISOFIT/Ellipse
-./fit.sh "$(get_galaxy_and_filter "$original_image")" "$original_image" "$output_table" "2 3 4" "1"
+harmonics="2 3 4 5 6 7 8"
+ol_threshold="1"
 
-# create DS9 region file with isophote ellipses
+while :; do
+	./fit.sh "$(get_galaxy_and_filter "$original_image")" "$original_image" "$output_table" "$harmonics" "$ol_threshold"
+	case "$?" in
+		# success
+		0)
+			echo_debug "fit successful"
+			break
+			;;
+		# could not find object center
+		1)
+			# if object locator threshold is already zero, give up
+			[ "$ol_threshold" = "0" ] && abort "object location failed"
+
+			# decrease object locator threshold
+			ol_threshold="$(bc -l <<< "$ol_threshold - 0.25")"
+			echo_debug "decreasing object locator threshold to $ol_threshold"
+
+			# try again
+			continue
+			;;
+		# error fitting harmonics
+		2)
+			# if already at minimum harmonics, exit indicating error
+			if [ "$harmonics" = "2 3 4" ]; then abort "fit failed"; fi
+
+			# decrease the number of harmonics (remove the last two terms)
+			harmonics="$(sed -e "s/ [0-9] [0-9]//g" <<< "$harmonics")"
+			echo_debug "using harmonics $harmonics"
+			
+			# try again
+			continue
+			;;
+		*)
+			abort "unknown error"
+			;;
+	esac
+done
+
+# create DS9 region file with isophote ellipses (optional, but nice to have)
 ./region-from-table.sh "$output_table"
 
 # run bmodel/cmodel
-./model.sh "$output_table"
+assert_successful ./model.sh "$output_table"
