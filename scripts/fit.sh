@@ -39,7 +39,7 @@ fi
 if grep -q "ERROR: Can not find object center." "$log_file"; then exit 1; fi
 
 # exit code 2 for harmonics-related errors
-if grep -q "Error in upper harmonic fit. Please, verify output table."; then exit 2; fi
+if grep -q "Error in upper harmonic fit. Please, verify output table." "$log_file"; then exit 2; fi
 
 # exit indicating success if table file was created
 [ -f "$table_file" ] && exit 0
