@@ -1,6 +1,6 @@
 #!/home/irafuser/miniconda2/envs/iraf27/iraf/bin/cl.e -f
 
-# uses imcopy to copy an image
+# crops an image using imcopy
 
 # initialize environment
 cl < init.cl
@@ -14,14 +14,13 @@ int y_crop = 0
 # read variables from command line arguments
 print(args) | scanf("%s %s %d %d", infile, outfile, x_crop, y_crop)
 
-# get image size
-int x_size = 0
-int y_size = 0
+# get image header, from which we can extract the image size information
 
 string header = ""
 imheader(infile) | scanf("%s", header)
 
 # find positions of brackets and commas in string
+
 int open_bracket_pos = 0
 open_bracket_pos = stridx("[", header)
 
@@ -31,11 +30,17 @@ comma_pos = stridx(",", header)
 int close_bracket_pos = 0
 close_bracket_pos = stridx("]", header)
 
+# initialize variables
+int x_size = 0
+int y_size = 0
+
 # use substring to extract positions of each measurement
 print(substr(header, open_bracket_pos + 1, comma_pos - 1)) | scanf("%d", x_size)
 print(substr(header, comma_pos + 1, close_bracket_pos - 1)) | scanf("%d", y_size)
 
 # find maximum values (size minus amount to crop)
+# (image coordinates are 1-indexed)
+
 int x_max = 0
 x_max = x_size - x_crop
 
@@ -50,7 +55,7 @@ x_min = 1 + x_crop
 int y_min = 0
 y_min = 1 + y_crop
 
-# perform copy
+# crop
 printf("imcopy(input=\"%s[%d:%d,%d:%d]\", output=\"%s\")", infile, x_min, x_max, y_min, y_max, outfile) | cl
 
 logout

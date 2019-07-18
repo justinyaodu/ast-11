@@ -10,7 +10,14 @@ source common.sh
 input_image="$1"
 output_mask="$2"
 threshold="$3"
-catalog_file="$input_image.cat"
+
+# the two lines below control where sextractor writes its catalog
+# note that this is the catalog for the masking stage, not the catalog for GC detection
+# since the catalog file is currently configured to print only the object number
+# (because Source Extractor would refuse to run without any output columns specified),
+# we can discard the catalog file output by writing it to /dev/null
+catalog_file="/dev/null"
+# catalog_file="$input_image.cat"
 
 # abort if input file doesn't exist
 assert_exists "$input_image"

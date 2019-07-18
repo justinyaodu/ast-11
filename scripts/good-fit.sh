@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# use imcopy to copy an image
+# determine if an ISOFIT table has good fit data
 
 source common.sh
 
@@ -13,4 +13,4 @@ table="$1"
 assert_exists "$table"
 
 # call Python script, giving a cleaned-up table print as input
-./tprint.sh "$table" "STOP" | sed -e "s/INDEF/5/g" | python -c "import good_fit; good_fit.is_good()"
+./tprint.sh "$table" "SMA,INTENS,STOP" | sed -e "s/INDEF/5/g" | python -c "import good_fit; good_fit.is_good()"

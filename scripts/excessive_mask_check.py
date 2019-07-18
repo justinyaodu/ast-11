@@ -47,9 +47,6 @@ class MaskChecker:
         return neighbors
 
     def process_pixel(self, x, y, iteration, isophote):
-        #self.pixels_this_iteration += 1
-        #print "processing", x, y, iteration
-
         # mark pixel as visited by this iteration
         self.visited[x, y] = iteration * (1 if isophote.contains_point(x, y) else -1)
 
@@ -67,14 +64,7 @@ class MaskChecker:
 
     # returns whether a pixel should be ignored for the rest of this iteration
     def should_skip(self, x, y, iteration):
-        if self.visited[x, y] == -iteration:
-            #print "skipping: already checked, not in this isophote"
-            return True
-        if self.visited[x, y] > 0:
-            #print "skipping: already checked, found to be in an isophote"
-            return True
-        #print "not skipping"
-        return False
+        return self.visited[x, y] == -iteration or self.visited[x, y] > 0
 
     # return whether a pixel hasn't been found to be inside an isophote yet
     def is_outside(self, point):
@@ -112,8 +102,6 @@ class MaskChecker:
         # points on perimeter, just outside the last checked isophote
         self.perimeter = set()
 
-        #self.pixels_this_iteration = 0
-    
         # using the isophotes to get the percentage of masked/total
         # i is the index to go through each array value
         # don't analyze the largest isophotes, because overmasking typically isn't
@@ -121,8 +109,6 @@ class MaskChecker:
         # don't check the smallest ones either
         for i in range(int(len(self.x0) * 2 / 5), int(len(self.x0) * 4 / 5)):
             isophote = Ellipse(self.x0[i], self.y0[i], self.ell[i], self.pa[i], self.sma[i])
-
-            #print "  " + str(len(self.perimeter)) + " pixels in perimeter"
 
             # if no points in perimeter, check the entire bounding box of the isophote
             if len(self.perimeter) == 0:
@@ -172,7 +158,6 @@ class MaskChecker:
                 # flood fill until all points visited
                 go_farther = self.perimeter
                 while len(go_farther) > 0:
-                    #print "  go_farther length is", len(go_farther)
                     processing = go_farther
                     go_farther = set()
                     for point in processing:
@@ -184,15 +169,13 @@ class MaskChecker:
             self.count_isophotes += 1
 
             print "isophote " + str(i) + ": ", self.count_masked, "of", self.count_in_ellipse, "pixels masked", "(" + "{0:.2f}".format(self.count_masked / self.count_in_ellipse * 100) + "%)"
-            #print "  pixels this iteration:", self.pixels_this_iteration
-            #self.pixels_this_iteration = 0           
- 
+            
             # determine if fraction of masked pixels is satisfactory
             if self.count_masked / self.count_in_ellipse <= 0.15:
                 self.count_good_isophotes += 1
         
         # determine if fraction of good isophotes is satisfactory
-        print str(self.count_good_isophotes) + " of " + str(self.count_isophotes) + " isophotes are good"
+        print str(self.count_good_isophotes) + " of " + str(self.count_isophotes) + " tested isophotes are good"
         if self.count_good_isophotes / self.count_isophotes >= 0.8:
             sys.exit(0)
         else:

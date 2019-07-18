@@ -7,11 +7,18 @@ import numpy as np
 # reads the table from standard input
 # INDEFs must be removed first
 def is_good():
-    # load array of stop codes
-    row_nums, stop_codes = np.loadtxt(sys.stdin, unpack=True)
+    # load table data into numpy arrays
+    row_nums, smas, intensities, stop_codes = np.loadtxt(sys.stdin, unpack=True)
 
-    # return whether number of 4's in array is less than some percentage
-    return (stop_codes == 4).sum() / stop_codes.size < 0.3
+    if stop_codes.size < 20
 
-if (is_good()): sys.exit(0)
-else          : sys.exit(1)
+    if smas[-1] < 15: then
+        print "failed: maximum SMA reached is only ", smas[-1]
+        sys.exit(1)
+
+    count_nonzero = (stop_codes != 0).sum
+    if count_nonzero / stop_codes.size > 0.5:
+        print "failed: too many nonzero error codes"
+        sys.exit(1)
+
+    sys.exit(0) # exit indicating success

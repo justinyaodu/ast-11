@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# use imcopy to copy an image
+# use imcopy to crop an image
 
 source common.sh
 
@@ -18,5 +18,5 @@ assert_exists "$input_image"
 # if output file exists, also abort
 assert_does_not_exist "$output_image"
 
-# perform copy
+# crop image
 ./crop.cl "$input_image" "$output_image" "$x_crop" "$y_crop"

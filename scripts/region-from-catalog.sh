@@ -18,9 +18,9 @@ generate_region_file() {
 	smin=$(bc -l <<< "$smaj * (1 - $ell)")
 
 	# convert pa to image rotation
-	pa=$(bc -l <<< "$pa * (-1)")
+	angle=$(bc -l <<< "90 + $pa" | head -c 8)
 
-	# convert to pixels
+	# convert smaj and smin to pixels
 	smaj=$(bc -l <<< "$smaj / 0.187" | head -c 8)
 	smin=$(bc -l <<< "$smin / 0.187" | head -c 8)
 
@@ -29,14 +29,7 @@ generate_region_file() {
 		# Region file format: DS9 version 4.1
 		global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
 		image
-		ellipse($x,$y,$smaj,$smin,$pa) #text={pa} color=red
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "- $pa" | head -c 5)) #text={neg pa} color=#f80
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "90 + $pa" | head -c 5)) #text={90 plus pa} color=yellow
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "90 - $pa" | head -c 5)) #text={90 minus pa} color=green
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "180 + $pa" | head -c 5)) #text={180 plus pa} color=blue
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "180 - $pa" | head -c 5)) #text={180 minus pa} color=pink
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "270 + $pa" | head -c 5)) #text={270 plus pa} color=#80f
-		ellipse($x,$y,$smaj,$smin,$(bc -l <<< "270 - $pa" | head -c 5)) #text={270 minus pa} color=#888
+		ellipse($x,$y,$smaj,$smin,$angle)
 	EOF
 }
 

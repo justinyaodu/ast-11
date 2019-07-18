@@ -24,7 +24,7 @@ print_ellipse_line() {
 	pa=$(bc -l <<< "90 + $pa" | head -c 6)
 
 	# print region file line, replacing any INDEFs with zeroes
-	line="ellipse($x,$y,$smaj,$smin,$pa) #text={$row_num}"
+	line="ellipse($x,$y,$smaj,$smin,$pa) #text={$row_num $intens}"
 	line="$(sed -e "s/INDEF/0/g" <<< "$line")"
 	echo "$line"
 }
@@ -33,9 +33,10 @@ print_ellipse_line() {
 [ $# -eq 1 ] || abort "usage: $0 <table.tab>"
 
 table_file="$1"
-region_file="${table_file::-4}.reg"
-
 assert_exists "$table_file"
+
+# remove .tab extension and append .reg instead
+region_file="${table_file::-4}.reg"
 assert_does_not_exist "$region_file"
 
 # write beginning of region file

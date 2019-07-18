@@ -13,4 +13,3 @@ assert_exists "$table" "$mask_image"
 
 # call the Python script
 ./tprint.sh "$table" "X0,Y0,ELLIP,PA,SMA" | sed -e "s/INDEF/-10000/g" | python -c "import excessive_mask_check; excessive_mask_check.MaskChecker(\"$mask_image\")"
-  
