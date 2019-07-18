@@ -46,7 +46,8 @@ def read_properties(galaxy_and_filter, catalog):
             pa  = float(line[pa_index  + offset])
             sma = float(line[sma_index + offset])
             return ell, pa, sma
-    print >> sys.stderr, "error: galaxy not in catalog"
+    print >> sys.stderr, "warning: galaxy not in catalog"
+    return -100.0, -100.0, -100.0
 
 # prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
 def get_properties(galaxy_and_filter, catalog):
