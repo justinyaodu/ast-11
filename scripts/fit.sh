@@ -19,7 +19,7 @@ log_file="$table_file.log"
 assert_exists "$image_file"
 
 # if output file exists, also abort
-assert_does_not_exist "$table_file"
+remove_if_exists "$table_file"
 
 # generate parameter files
 assert_successful ./generate-geompar.sh "$galaxy_and_filter" "$image_file"

@@ -1,3 +1,4 @@
+from __future__ import division
 import sys
 import re
 import numpy as np
