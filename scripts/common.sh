@@ -70,20 +70,6 @@ strip_extension() {
 	sed -e 's/\.[^.]*$//g' <<< "$1"
 }
 
-# logs a command's output to a file as well
-run_and_log() {
-	# first argument is the log file
-	log_file="$1"
-	assert_does_not_exist "$log_file"
-
-	# remove the first argument from the argument list
-	shift
-
-	# run the provided command and arguments,
-	# saving stdout and stderr to the log file
-	{ 2>&1 $@ } | tee "$log_file"
-}
-
 # print error message if we suspect that the user has not activated the conda environment
 # do this by checking for the presence of the IRAF cl executable
 [ -n "$(type -P cl)" ] || abort "conda environment is not activated"

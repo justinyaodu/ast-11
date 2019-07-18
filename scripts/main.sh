@@ -35,7 +35,7 @@ assert_successful ./create-model.sh "$original_image"
 assert_successful ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${name_base}_modsub1.fits"
 
 # generate mask for remaining bright objects
-run_and_log "$work_dir/create-mask.log" assert_successful ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"
+assert_successful ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"
 
 # generate second pass light model
 assert_successful ./create-model.sh "$original_image"

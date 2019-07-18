@@ -12,6 +12,6 @@ directory="$1"
 
 galaxy_and_filter="$(get_galaxy_and_filter "$(ls "$directory" | head -n 1)")"
 
-for item in "_mod1.tab" "_mod1.fits" "_modsub1.fits" "_seg.fits" ".fits.pl" "_mod2.tab" "_mod2.fits"; do
+for item in "_mod1.tab" "_mod1.reg" "_mod1.fits" "_modsub1.fits" "_seg.fits" ".fits.pl" "_mod2.tab" "_mod2.reg" "_mod2.fits"; do
 	rm "$directory/$galaxy_and_filter$item"
 done
