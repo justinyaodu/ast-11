@@ -17,22 +17,27 @@ for galaxy_dir in "$containing_dir"/*; do
 	# skip if not a directory
 	[ -d "$galaxy_dir" ] || continue
 
-	# check every file in directory
-	for file in "$galaxy_dir"/*; do
+	galaxy_name="$(basename "$galaxy_dir")"
 
-		# if this file is an original image file
-		if grep -q 'VCC[0-9][0-9][0-9][0-9]_[ugriz]\.fits$' <<< "$(basename "$file")"; then
+	# filters in order of preference
+	# TODO ask mentors about which are best, after g
+	for filter in "g" "u" "i" "z" "r"; do
+		file="$galaxy_dir/${galaxy_name}_${filter}.fits"
+		
+		# skip if no image exists for filter
+		if [ ! -f "$file" ]; then continue; fi
+		
+		# print a fancy banner
+		echo
+		echo "======== processing image file $file ========"
+		echo
 
-			# print a fancy banner
-			echo
-			echo "======== processing image file $file ========"
-			echo
-
-			# run main.sh on this image
-			# if it's unsuccessful, create indicator file
-			if ! ./main.sh "$file"; then
-				touch "$file.failed"
-			fi
+		if ./main.sh "$file"; then
+			# one image processed, no need to do more
+			break
+		else
+			# mark as failed
+			touch "$file.failed"
 		fi
 	done
 done

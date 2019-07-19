@@ -28,11 +28,11 @@ if [ -f "$modsub2" ]; then
 		# reset directory, so that we can run again
 		./reset.sh "$original_image"
 	else
-		abort "modsub2 image already exists and is up to date, skipping"
+		echo_debug "modsub2 image already exists and is up to date, skipping"
+		exit 0
 	fi
 elif [ -f "$original_image.failed" ]; then
-	echo_debug "last run failed; will not attempt rerun"
-	exit 0
+	abort "last run failed; will not attempt rerun"
 fi
 
 # silently delete files if any exist
