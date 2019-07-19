@@ -9,6 +9,9 @@ source common.sh
 
 original_image="$1"
 
+# abort if input file doesn't exist
+assert_exists "$original_image"
+
 # strip .fits extension, but retain galaxy name and directory information
 # e.g. "/some/path/VCC1827_i.fits" becomes "/some/path/VCC1827_i"
 name_base=${original_image::-5}
@@ -27,16 +30,19 @@ if [ -f "$modsub2" ]; then
 	else
 		abort "modsub2 image already exists and is up to date, skipping"
 	fi
+elif [ -f "$original_image.failed" ]; then
+	echo_debug "last run failed; will not attempt rerun"
+	exit 0
 fi
+
+# silently delete files if any exist
+./reset.sh "$original_image" > /dev/null 2>&1
 
 # use a regular expression to find the galaxy VCC name and the image filter
 # TODO we might need to update this and other parts of the pipeline that assume VCC objects
 # if we want to make the pipeline work for other objects
 # alternatively, we could invent "fake" VCC numbers for those objects...
 galaxy_and_filter="$(get_galaxy_and_filter "$original_image")"
-
-# abort if input file doesn't exist
-assert_exists "$original_image"
 
 # generate first pass light model
 assert_successful run_and_log "${name_base}_createmodel1.log" ./create-model.sh "$original_image" "1"

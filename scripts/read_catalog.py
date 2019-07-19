@@ -6,6 +6,7 @@ import numpy as np
 def get_offset(filter_name):
     if filter_name == "u": return 0
     if filter_name == "g": return 1
+    if filter_name == "r": return 2
     if filter_name == "i": return 3
     if filter_name == "z": return 4
     raise ValueError("invalid filter")

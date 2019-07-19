@@ -17,19 +17,11 @@ for galaxy_dir in "$containing_dir"/*; do
 	# skip if not a directory
 	[ -d "$galaxy_dir" ] || continue
 
-	# create output directory
-	output_dir="$galaxy_dir/output"
-	mkdir "$output_dir"
-
-	# if "long" directory exists, use the image files in there
-	if [ -d "$galaxy_dir/long" ]; then
-		galaxy_dir="$galaxy_dir/long"
-	fi
-
+	# check every file in directory
 	for file in "$galaxy_dir"/*; do
 
 		# if this file is an original image file
-		if grep -q 'VCC[0-9][0-9][0-9][0-9]_[ugriz]\.fits' <<< "$file"; then
+		if grep -q 'VCC[0-9][0-9][0-9][0-9]_[ugriz]\.fits$' <<< "$(basename "$file")"; then
 
 			# print a fancy banner
 			echo
@@ -37,7 +29,10 @@ for galaxy_dir in "$containing_dir"/*; do
 			echo
 
 			# run main.sh on this image
-			./main.sh "$file"
+			# if it's unsuccessful, create indicator file
+			if ! ./main.sh "$file"; then
+				touch "$file.failed"
+			fi
 		fi
 	done
 done
