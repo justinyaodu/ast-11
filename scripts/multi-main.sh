@@ -36,11 +36,8 @@ for galaxy_dir in "$containing_dir"/*; do
 			echo "======== processing image file $file ========"
 			echo
 
-			# create a symlink to the image file in the output folder
-			ln -s "$file" "$output_dir/$(basename "$file")"
-
 			# run main.sh on this image
-			echo ./main.sh "$file"
+			./main.sh "$file"
 		fi
 	done
 done
