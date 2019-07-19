@@ -5,13 +5,13 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "usage: $0 <directory>"
+[ $# -eq 1 ] || abort "usage: $0 <original_image.fits>"
 
-directory="$1"
-[ -d "$directory" ] || abort "is not a directory"
+original_image="$1"
+directory="$(dirname "$original_image")"
 
-galaxy_and_filter="$(get_galaxy_and_filter "$(ls "$directory" | grep "VCC" | head -n 1)")"
+galaxy_and_filter="$(get_galaxy_and_filter "$original_image")"
 
-for item in "_mod1.fits" "_modsub1.fits" "_seg.fits" ".fits.pl" "_mod2.fits"; do
-	rm "$directory/$galaxy_and_filter$item"
+for suffix in "_mod1.fits" "_modsub1.fits" "_seg.fits" ".fits.pl" "_mod2.fits"; do
+	rm "$directory/$galaxy_and_filter$suffix"
 done

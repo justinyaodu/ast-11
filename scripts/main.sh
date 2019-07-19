@@ -13,8 +13,21 @@ original_image="$1"
 # e.g. "/some/path/VCC1827_i.fits" becomes "/some/path/VCC1827_i"
 name_base=${original_image::-5}
 
-# abort if final image already exists
-assert_does_not_exist "${name_base}_modsub2.fits"
+# check if final image already exists
+modsub2="${name_base}_modsub2.fits"
+if [ -f "$modsub2" ]; then
+
+	# if original image has been updated since modsub2 was generated
+	if [ "$original_image" -nt "$modsub2" ]; then
+
+		echo_debug "final image is outdated; resetting and running again"
+
+		# reset directory, so that we can run again
+		./reset.sh "$original_image"
+	else
+		abort "modsub2 image already exists and is up to date, skipping"
+	fi
+fi
 
 # use a regular expression to find the galaxy VCC name and the image filter
 # TODO we might need to update this and other parts of the pipeline that assume VCC objects
