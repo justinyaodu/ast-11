@@ -13,7 +13,7 @@ table_file="$3"
 harmonics="$4"
 ol_threshold="$5"
 
-log_file="$table_file.log"
+log_file="$(strip_extension "$table_file")_fit.log"
 
 # abort if input file doesn't exist
 assert_exists "$image_file"

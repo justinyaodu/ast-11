@@ -12,7 +12,7 @@ table_file="$1"
 # output image has the same name as the table file, but with a .fits extension
 output_image="$(strip_extension "$table_file").fits"
 
-log_file="$output_image.log"
+log_file="$(strip_extension "$output_image")_model.log"
 
 # abort if input file doesn't exist
 assert_exists "$table_file"

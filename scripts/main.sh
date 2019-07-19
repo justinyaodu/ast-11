@@ -26,7 +26,7 @@ galaxy_and_filter="$(get_galaxy_and_filter "$original_image")"
 assert_exists "$original_image"
 
 # generate first pass light model
-assert_successful ./create-model.sh "$original_image" "1"
+assert_successful run_and_log "${name_base}_createmodel1.log" ./create-model.sh "$original_image" "1"
 
 # perform subtraction
 assert_successful ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${name_base}_modsub1.fits"
@@ -35,7 +35,7 @@ assert_successful ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${na
 assert_successful run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"
 
 # generate second pass light model
-assert_successful ./create-model.sh "$original_image" "2"
+assert_successful run_and_log "${name_base}_createmodel2.log" ./create-model.sh "$original_image" "2"
 
 # perform final subtraction
 assert_successful ./subtract.sh "$original_image" "${name_base}_mod2.fits" "${name_base}_modsub2.fits"
