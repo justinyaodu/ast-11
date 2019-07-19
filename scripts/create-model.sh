@@ -20,7 +20,7 @@ output_table="${filename_stripped}_mod$iteration.tab"
 assert_does_not_exist "$output_table"
 
 # run ISOFIT/Ellipse
-harmonics="2 3 4 5 6 7 8"
+harmonics="2 3 4 5 6"
 ol_threshold="1"
 
 while :; do

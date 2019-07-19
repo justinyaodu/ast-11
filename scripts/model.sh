@@ -25,7 +25,19 @@ background="$(./background.sh "$table_file")"
 
 # create model, running appropriate cl script
 if using_isofit; then
-	run_and_log "$log_file" ./cmodel.cl "$table_file" "$output_image" "$background"
+	run_and_log "$log_file" ./cmodel.cl "$table_file" "$output_image" "$background" "yes"
 else
-	run_and_log "$log_file" ./bmodel.cl "$table_file" "$output_image" "$background"
+	run_and_log "$log_file" ./bmodel.cl "$table_file" "$output_image" "$background" "yes"
 fi
+
+# if error encountered, try again but do not use higher harmonics
+if grep -q "ERROR" "$log_file"; then
+	if using_isofit; then
+		run_and_log "$log_file" ./cmodel.cl "$table_file" "$output_image" "$background" "no"
+	else
+		run_and_log "$log_file" ./bmodel.cl "$table_file" "$output_image" "$background" "no"
+	fi
+fi
+
+# if an error still encountered, exit indicating failure
+if grep -q "ERROR" "$log_file"; then exit 1; fi

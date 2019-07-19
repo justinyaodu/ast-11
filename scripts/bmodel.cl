@@ -9,15 +9,16 @@ cl < init.cl
 string infile = ""
 string outfile = ""
 real background = 0
+string highar = ""
 
 # read variables from command line arguments
-print(args) | scanf("%s %s %f", infile, outfile, background)
+print(args) | scanf("%s %s %f %s", infile, outfile, background, highar)
 
 # load package
 stsdas
 analysis.isophote
 
 # create model
-printf("bmodel(table=\"%s\", output=\"%s\", backgr=%f, highar=no, verbose=yes, interp=\"spline\")", infile, outfile, background) | cl
+printf("bmodel(table=\"%s\", output=\"%s\", backgr=%f, highar=%s, verbose=yes, interp=\"spline\")", infile, outfile, background, highar) | cl
 
 logout
