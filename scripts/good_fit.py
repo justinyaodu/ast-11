@@ -19,7 +19,7 @@ def is_good():
         print "failed: maximum SMA reached is only ", smas[-1]
         sys.exit(1)
 
-    if np.sum(stop_codes != 0) / stop_codes.size > 0.5:
+    if np.sum(stop_codes != 0) / stop_codes.size > 0.6:
         print "failed: too many nonzero error codes"
         sys.exit(1)
 
