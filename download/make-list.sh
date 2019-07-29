@@ -30,7 +30,8 @@
 		>&2 echo "processing dir $image_dir"
 
 		# show all files in directory, with the timestamp as well
-		# for each file, print an epoch timestamp and the filename
-		stat --printf="%Y %n\n" "$image_dir"/*
+		# for each file, print an epoch timestamp, filesize in bytes,
+		# and the filename
+		stat --printf="%Y %s %n\n" "$image_dir"/*
 	done
 } > list.txt

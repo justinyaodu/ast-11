@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# temporary file containing SFTP commands to download files that need updating
+sftp_commands=".sftp-commands"
+
 # prompt user for whether to download list
-read -p "update list.txt? [y/n] " -n 1 update
+read -p "update list.txt? [y/n] " update
 
 if [ "$update" = "y" ]; then
 	echo "updating list.txt"
@@ -11,6 +14,7 @@ else
 	echo "skipping update of list.txt"
 fi
 
+echo "updating images..."
 {
 	# for every galaxy directory present in the current directory
 	for galaxy_dir in VCC????; do
@@ -21,9 +25,13 @@ fi
 			# read each line of text from pipe
 			while read -r line; do
 
-				# extract the timestamp and the file name
+				# extract the timestamp, file size, and file name
 				timestamp="$(echo "$line" | grep -o "^[0-9]*")"
-				file="$(echo "$line" | sed -e 's/^[0-9]* //g')"
+
+				# pipe through xargs to trim whitespace
+				filesize="$(echo "$line" | grep -o " [0-9]* " | xargs)"
+				
+				file="$(echo "$line" | sed -e 's/^[0-9]* [0-9]* //g')"
 				
 				# get just the filename (without the path)
 				file_basename="$(basename "$file")"
@@ -34,23 +42,43 @@ fi
 				# if file exists on server but not here,
 				# mark for download
 				if [ ! -f "$local_file" ]; then
+					>&2 echo "does not exist: $local_file from $file"
 					echo "$file"
-				else
-					local_timestamp="$(stat --printf="%Y" "$local_file")"
-					
-					# if local file is outdated
-					if [ "$local_timestamp" -lt "$timestamp" ]; then
-						echo "$file"
-					fi
+					continue
 				fi
+				
+				# check if local file is outdated
+				local_timestamp="$(stat --printf="%Y" "$local_file")"
+				if [ "$local_timestamp" -lt "$timestamp" ]; then
+					>&2 echo "outdated: $local_file older than $file"
+					>&2 echo "    difference: $(( $timestamp - $local_timestamp )) seconds"
+					echo "$file"
+					continue
+				fi
+				
+				# check if file sizes differ
+				local_filesize="$(stat --printf="%s" "$local_file")"
+				if [ "$local_filesize" -ne "$filesize" ]; then
+					>&2 echo "file sizes differ: $local_file and $file"
+					>&2 echo "    difference: $(( $filesize - $local_filesize)) bytes"
+					echo "$file"
+					continue
+				fi
+				
+				>&2 echo "up to date: $local_file"
 			done
 		}
 	done
 } | {
 	# this section creates a SFTP command from the file path
 	while read -r file; do
-		# sed strips the long/ directory from path, if it is there
+		# sed strips the long/ directory from destination path, if present
 		echo "get \"/net/phizo/data/d/AST-02/certain/$file\" \"$(echo "$file" | sed -e 's/long\///g')\""
 	done
-# and sftp downloads the files from the server
-} | sftp -R 256 -B 65536 gst131@ssh.ucolick.org
+} > "$sftp_commands"
+
+# and sftp downloads the files from the server, if there are any to update
+[ -s "$sftp_commands" ] && sftp -R 256 -B 65536 gst131@ssh.ucolick.org < "$sftp_commands"
+
+# delete temporary file
+rm "$sftp_commands"
