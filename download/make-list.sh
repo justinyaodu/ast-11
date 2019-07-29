@@ -29,9 +29,7 @@
 		# (standard output is being redirected to a file)
 		>&2 echo "processing dir $image_dir"
 
-		# show all files in directory, with the timestamp as well
-		# for each file, print an epoch timestamp, filesize in bytes,
-		# and the filename
-		stat --printf="%Y %s %n\n" "$image_dir"/*
+		# show all files in directory, with checksum and filesize
+		cksum "$image_dir"/*
 	done
 } > list.txt
