@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# prompt user for whether to download list
+read -p "update list.txt? [y/n] " -n 1 update
+
+if [ "$update" = "y" ]; then
+	echo "updating list.txt"
+	# copy list.txt from server to current folder
+	scp gst131@ssh.ucolick.org:/net/phizo/data/d/AST-02/certain/list.txt .
+else
+	echo "skipping update of list.txt"
+fi
+
 {
 	# for every galaxy directory present in the current directory
 	for galaxy_dir in VCC????; do
@@ -38,6 +49,7 @@
 } | {
 	# this section creates a SFTP command from the file path
 	while read -r file; do
+		# sed strips the long/ directory from path, if it is there
 		echo "get \"/net/phizo/data/d/AST-02/certain/$file\" \"$(echo "$file" | sed -e 's/long\///g')\""
 	done
 # and sftp downloads the files from the server
