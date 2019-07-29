@@ -32,10 +32,7 @@ for galaxy_dir in "$containing_dir"/*; do
 		echo "======== processing image file $file ========"
 		echo
 
-		if ./main.sh "$file"; then
-			# one image processed, no need to do more
-			break
-		else
+		if ! ./main.sh "$file"; then
 			# mark as failed
 			touch "$file.failed"
 		fi
