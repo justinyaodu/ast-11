@@ -21,7 +21,7 @@ if ! ds9_xpa_running; then
 fi
 
 # loop over all modsub2 images
-for image in $(find "$containing_dir" | grep "modsub2.fits"); do
+for image in $(find "$containing_dir" | grep "modsub2.fits" | sort); do
 	assert_successful ./inspect.sh "$image"
 
 	# press Enter to view next image
