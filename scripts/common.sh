@@ -27,6 +27,14 @@ assert_exists() {
 	done
 }
 
+assert_directory_exists() {
+	[ $# -ne 0 ] || abort "assert_directory_exists: no files specified"
+	while [ "$1" != "" ]; do
+		[ -d "$1" ] || abort "error: directory does not exist: $1"
+		shift
+	done
+}
+
 # exit with error code if any of the files do exist
 # useful for output files
 assert_does_not_exist() {
