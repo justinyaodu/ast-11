@@ -25,8 +25,8 @@ echo "updating images..."
 			# read each line of text from pipe
 			while read -r line; do
 
-				# extract the checksum, file size, and file name
-				checksum="$(echo "$line" | grep -o "^[0-9]*")"
+				# extract the timestamp, file size, and file name
+				timestamp="$(echo "$line" | grep -o "^[0-9]*")"
 
 				# pipe through xargs to trim whitespace
 				filesize="$(echo "$line" | grep -o " [0-9]* " | xargs)"
@@ -48,9 +48,10 @@ echo "updating images..."
 				fi
 				
 				# check if local file is outdated
-				local_checksum="$(cksum "$local_file" | grep -o '^[0-9]*')"
-				if [ "$local_checksum" -ne "$checksum" ]; then
-					>&2 echo "checksums differ: $local_file and $file"
+				local_timestamp="$(stat --printf="%Y" "$local_file")"
+				if [ "$local_timestamp" -lt "$timestamp" ]; then
+					>&2 echo "outdated: $local_file older than $file"
+					>&2 echo "    difference: $(( $timestamp - $local_timestamp )) seconds"
 					echo "$file"
 					continue
 				fi
