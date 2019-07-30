@@ -19,7 +19,7 @@ maxsma=$7
 cat > uparmisegeompr.par << EOF
 x0,r,h,$x0,1.,INDEF,"initial isophote center X"
 y0,r,h,$y0,1.,INDEF,"initial isophote center Y"
-ellip0,r,h,$ellip0,0.05,1.,"initial ellipticity"
+ellip0,r,h,$ellip0,0.01,1.,"initial ellipticity"
 pa0,r,h,$pa0,-90.,90.,"initial position angle (degrees)"
 sma0,r,h,$sma0,5.,INDEF,"initial semi-major axis length"
 minsma,r,h,$minsma,0.,INDEF,"minimum semi-major axis length"
