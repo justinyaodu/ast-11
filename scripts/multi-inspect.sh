@@ -23,7 +23,7 @@ fi
 search_for=''
 
 # loop over all modsub2 images
-for image in $(find "$containing_dir" | grep 'modsub2.fits'); do
+for image in $(find "$containing_dir" | grep 'modsub2.fits' | sort); do
 	# if image does not match search string
 	if ! grep -q "$search_for" <<< "$image"; then
 		echo "    skipping $image: does not match search string $search_for"
