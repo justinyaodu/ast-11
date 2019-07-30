@@ -25,9 +25,9 @@ background="$(./background.sh "$table_file")"
 
 # create model, running appropriate cl script
 if using_isofit; then
-	run_and_log "$log_file" ./cmodel.cl "$table_file" "$output_image" "$background" "yes"
+	assert_successful run_and_log "$log_file" timeout 10m ./cmodel.cl "$table_file" "$output_image" "$background" "yes"
 else
-	run_and_log "$log_file" ./bmodel.cl "$table_file" "$output_image" "$background" "yes"
+	assert_successful run_and_log "$log_file" timeout 10m ./bmodel.cl "$table_file" "$output_image" "$background" "yes"
 fi
 
 # if error encountered, try again but do not use higher harmonics
