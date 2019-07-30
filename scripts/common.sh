@@ -88,6 +88,12 @@ run_and_log() {
 	# return the exit code of the command which was run
 	return "${PIPESTATUS[0]}"
 }
+
+# check to see whether the DS9 XPA server is up
+ds9_xpa_running() {
+	xpaget xpans 2>/dev/null | grep -q 'ds9'
+}
+
 # print error message if we suspect that the user has not activated the conda environment
 # do this by checking for the presence of the IRAF cl executable
 [ -n "$(type -P cl)" ] || abort "conda environment is not activated"

@@ -20,7 +20,7 @@ cd "$dir"
 		# skip if not a directory
 		[ -d "$galaxy_dir" ] || continue
 
-		for band in 'u' 'g' 'r' 'i' 'z'; do
+		for band in 'g' 'i' 'r' 'u' 'z'; do
 			name="${galaxy_dir}_${band}"
 			original_image="${galaxy_dir}/$name.fits"
 
