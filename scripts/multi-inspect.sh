@@ -11,15 +11,17 @@ source common.sh
 # makes no practical difference, but looks nicer when printing
 containing_dir="$(sed -e 's/\/$//g' <<< "$1")"
 
-# start DS9
-echo_debug "starting DS9..."
-ds9 &
+# start DS9 if not running
+if ! ds9_xpa_running; then
+	echo_debug "starting DS9..."
+	ds9 &
 
-# wait for DS9 to start
-while ! ds9_xpa_running; do sleep 1; done
+	# wait for DS9 to start
+	while ! ds9_xpa_running; do sleep 1; done
+fi
 
 # loop over all modsub2 images
-for image in "$containing_dir"/*/*modsub2*; do
+for image in $(find "$containing_dir" | grep "modsub2.fits"); do
 	assert_successful ./inspect.sh "$image"
 
 	# press Enter to view next image
