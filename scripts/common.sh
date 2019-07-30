@@ -78,6 +78,10 @@ strip_extension() {
 	sed -e 's/\.[^.]*$//g' <<< "$1"
 }
 
+strip_trailing_slash() {
+	echo "$(sed -e 's/\/$//g' <<< "$1")"
+}
+
 # run a command and log output to a file as well
 run_and_log() {
 	# first argument is the log file
@@ -100,6 +104,13 @@ run_and_log() {
 # check to see whether the DS9 XPA server is up
 ds9_xpa_running() {
 	xpaget xpans 2>/dev/null | grep -q 'ds9'
+}
+
+# print a fancy banner
+print_banner() {
+	echo
+	echo "======== $@ ========"
+	echo
 }
 
 # print error message if we suspect that the user has not activated the conda environment

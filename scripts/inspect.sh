@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# implements the complete workflow
+# displays a FITS image in a running DS9 instance
 
 source common.sh
 

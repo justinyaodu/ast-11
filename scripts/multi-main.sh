@@ -7,9 +7,7 @@ source common.sh
 # print usage message if number of parameters is incorrect
 [ $# -eq 1 ] || abort "usage: $0 <directory/containing/galaxy/directories>"
 
-# remove trailing slash on directory, if any
-# makes no practical difference, but looks nicer when printing
-containing_dir="$(sed -e 's/\/$//g' <<< "$1")"
+containing_dir="$(strip_trailing_slash "$1")"
 
 # loop over everything in directory
 for galaxy_dir in "$containing_dir"/*; do
@@ -27,10 +25,7 @@ for galaxy_dir in "$containing_dir"/*; do
 		# skip if no image exists for filter
 		if [ ! -f "$file" ]; then continue; fi
 		
-		# print a fancy banner
-		echo
-		echo "======== processing image file $file ========"
-		echo
+		print_banner "processing image file $file"
 
 		if ! ./main.sh "$file"; then
 			# mark as failed
