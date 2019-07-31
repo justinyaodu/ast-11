@@ -8,12 +8,8 @@ def fits_center(fits):
     return x0, y0
 
 def fits_size(fits):
-    try:
-        width = int((fits[0].header[3]))
-        height = int((fits[0].header[4]))
-    except ValueError:
-        width = len(fits[0].data)
-        height = len(fits[0].data[0])
+    width = int((fits[0].header[3]))
+    height = int((fits[0].header[4]))
     return width, height
 
 # print the center of a FITS image
