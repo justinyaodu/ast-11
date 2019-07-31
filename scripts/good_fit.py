@@ -16,7 +16,7 @@ def is_good():
         sys.exit(1)
 
     if smas[-1] < 15:
-        print "failed: maximum SMA reached is only ", smas[-1]
+        print "failed: maximum SMA reached is only", smas[-1]
         sys.exit(1)
 
     if np.sum(stop_codes != 0) / stop_codes.size > 0.6:
