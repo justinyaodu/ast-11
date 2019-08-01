@@ -1,6 +1,7 @@
 #!/bin/bash
 
 from astropy.io import fits
+import sys
 
 def read_catalog():
   catalog_file=astropy.io.fits.open()
