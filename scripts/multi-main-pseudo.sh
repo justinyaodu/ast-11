@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# runs main.sh for each image in a directory containing multiple galaxy directories
+# runs main-pseudo.sh for each image in a directory containing multiple galaxy directories
 
 source common.sh
 
@@ -27,12 +27,9 @@ for galaxy_dir in "$containing_dir"/*; do
 		
 		print_banner "processing image file $file"
 
-		if ! ./main.sh "$file"; then
+		if ! ./main-pseudo.sh "$file"; then
 			# mark as failed
 			touch "$file.failed"
 		fi
-
-		# use presence of indicator file as a safe stop signal
-		[ -f "STOP" ] && abort "stop file exists"
 	done
 done

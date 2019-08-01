@@ -5,36 +5,39 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "usage: $0 <directory/containing/modsub2/images>"
+[ $# -ge 3 ] || abort "usage: $0 <directory/containing/galaxy/directories> <catalog/output/dir> <galaxy_and_filter_1> [galaxy_and_filter_2] ..."
 
 directory="$(strip_trailing_slash "$1")"
 assert_directory_exists "$directory"
 
-# make sure modsub2 images exist
-ls "$directory"/*modsub2.fits 2>&1 > /dev/null || abort "no modsub2 images in directory"
+catalog_directory="$(strip_trailing_slash "$2")"
+assert_directory_exists "$catalog_directory"
 
-# get galaxy name
-galaxy="$(get_galaxy_and_filter "$(ls "$directory"/*modsub2.fits | head -n 1)" | grep -o '^VCC....')"
+shift 2
 
 # identify object detection image
-for band in 'g' 'u' 'i' 'r' 'z'; do
-	# attempt to use this image
-	detect_image="$directory/${galaxy}_${band}_modsub2.fits"
-
-	# if image found, exit loop
-	[ -f "$detect_image" ] && break
+for band in 'g' 'i' 'z' 'u' 'r'; do
+	detect="$(grep -o "VCC...._${band}" <<< "$@")" && break
 done
 
-echo_debug "using detection image: $detect_image"
+echo_debug "detecting with: $detect"
+
+get_modsub2() {
+	echo "$directory"/"$(grep -o 'VCC....' <<< "$1")"/"$1_modsub2.fits"
+}
+
+detect_image="$(get_modsub2 "$detect")"
 
 detect_weight="$(sed -e 's/\_modsub2.fits/_sig.fits/g' <<< "$detect_image")"
 detect_flag="$(sed -e 's/\_modsub2.fits/_flag.fits/g' <<< "$detect_image")"
 
-for measure_image in "$directory"/*modsub2.fits; do
+for measure in $@; do
+	measure_image="$(get_modsub2 "$measure")"
+
 	measure_weight="$(sed -e 's/\_modsub2.fits/_sig.fits/g' <<< "$measure_image")"
 	measure_flag="$(sed -e 's/\_modsub2.fits/_flag.fits/g' <<< "$measure_image")"
 
-	catalog_file="$directory/$(get_galaxy_and_filter "$measure_image").cat"
+	catalog_file="$catalog_directory/$measure.cat"
 
 	# if catalog already exists and newer than modsub2 images, skip
 	if [ -f "$catalog_file" ] && [ "$catalog_file" -nt "$detect_image" ] && [ "$catalog_file" -nt "$measure_image" ]; then

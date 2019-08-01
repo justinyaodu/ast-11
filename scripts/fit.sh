@@ -18,7 +18,7 @@ log_file="$(strip_extension "$table_file")_fit.log"
 # abort if input file doesn't exist
 assert_exists "$image_file"
 
-# if output file exists, also abort
+# if output file exists, remove it
 remove_if_exists "$table_file"
 
 # generate parameter files

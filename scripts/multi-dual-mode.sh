@@ -5,15 +5,45 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "usage: $0 <directory/containing/galaxy/directories>"
+[ $# -eq 3 ] || abort "usage: $0 <galaxy_and_filter_list.txt> <directory/containing/galaxy/directories> <catalog/directory>"
 
-# remove trailing slash on directory, if any
-# makes no practical difference, but looks nicer when printing
-containing_dir="$(sed -e 's/\/$//g' <<< "$1")"
+list="$1"
+assert_exists "$list"
 
-for galaxy_dir in "$containing_dir"/*; do
-	
-	[ -d "$galaxy_dir" ] || continue
+galaxy_dir_dir="$2"
+catalog_dir="$3"
+assert_directory_exists "$galaxy_dir_dir" "$catalog_dir"
 
-	./dual-mode.sh "$galaxy_dir"
+process_galaxies() {
+	true
+	# echo "    process $@"
+	# ./dual-mode.sh "$galaxy_dir_dir" "$catalog_dir" $@
+}
+
+galaxy=''
+chunk=''
+# use sed to remove carriage returns
+sed -e 's/\r$//g' < "$list" | while read -r line; do
+	# galaxy of current line
+	new_galaxy="$(grep -o 'VCC....' <<< "$line")"
+
+	#echo old $galaxy new $new_galaxy
+
+	# if it matches current chunk galaxy
+	if [ "$new_galaxy" = "$galaxy" ]; then
+		echo "chunk before: '$chunk'"
+		chunk="$chunk $line"
+		echo "chunk after : '$chunk'"
+	else
+		# process old chunk, if chunk not empty
+		[ -z "$chunk" ] || process_galaxies $chunk
+
+		galaxy="$new_galaxy"
+		echo "chunk before: '$chunk'"
+		chunk="$line"
+		echo "chunk after : '$chunk'"
+	fi
 done
+
+# take care of last chunk
+process_galaxies $chunk

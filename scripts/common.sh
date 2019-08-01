@@ -108,9 +108,9 @@ ds9_xpa_running() {
 
 # print a fancy banner
 print_banner() {
-	echo
-	echo "======== $@ ========"
-	echo
+	>&2 echo
+	>&2 echo "======== $@ ========"
+	>&2 echo
 }
 
 # print error message if we suspect that the user has not activated the conda environment

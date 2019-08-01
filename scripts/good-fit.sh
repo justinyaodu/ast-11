@@ -2,6 +2,11 @@
 
 # determine if an ISOFIT table has good fit data
 
+# TODO here's a hack to disable this script
+# without messing with anything else
+exit 0
+# TODO end hack
+
 source common.sh
 
 # print usage message if number of parameters is incorrect
