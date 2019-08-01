@@ -1,11 +1,10 @@
-#!/bin/bash
 
+import astropy
 from astropy.io import fits
 import sys
 
-def read_catalog():
-  catalog_file=astropy.io.fits.open()
-  hdul=fits.open(catalog_file)
+def read_catalog(catalog_file_name):
+  hdul=fits.open(catalog_file_name)
   data=hdul[1].data
-  data.info()
-sys.exit(0)
+  print(data)
+  sys.exit(0)
