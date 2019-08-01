@@ -6,5 +6,5 @@ import sys
 def read_catalog():
   catalog_file=astropy.io.fits.open()
   hdul=fits.open(catalog_file)
-  return hdul.info()
+  print(hdul.info())
 sys.exit(0)
