@@ -13,4 +13,4 @@ catalog_file="$1"
 assert_exists "$catalog_file"
 
 # call Python script
-python -c "open_cat_files; open_cat_files.read_catalog()"
+python -c "import open_cat_files; open_cat_files.read_catalog()"
