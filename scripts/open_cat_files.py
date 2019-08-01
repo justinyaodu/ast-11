@@ -7,4 +7,5 @@ def read_catalog(catalog_file_name):
   hdul=fits.open(catalog_file_name)
   data=hdul[1].data
   print(data)
+  hdul.info()
   sys.exit(0)
