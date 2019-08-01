@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# slideshows modsub2 images to facilitate human verification of proper light subtraction
+# slideshows images to facilitate human verification of proper light subtraction
 
 source common.sh
 
@@ -8,11 +8,6 @@ source common.sh
 [ $# -ge 1 ] || abort "usage: $0 <directory/containing/galaxy/directories>"
 
 containing_dir="$(strip_trailing_slash "$1")"
-if [ -z "$2" ]; then
-	file_filter='modsub2.fits'
-else
-	file_filter="$2"
-fi
 
 # start DS9 if not running
 if ! ds9_xpa_running; then
@@ -31,6 +26,8 @@ done
 
 galaxy_index=0
 frame_count=0
+debug='false'
+zoom='1'
 
 for_each_frame() {
 	xpaset -p ds9 frame first
@@ -47,6 +44,7 @@ is_integer() {
 }
 
 parse_command() {
+	[ "$debug" = 'true' ] && echo $@
 	case "$1" in
 		h | help)
 			cat <<- EOF
@@ -67,12 +65,14 @@ parse_command() {
 			    z[scale]   : use linear zscale scaling
 			    l[og]      : use log zmax scaling
 
-			    i[n] [n]   : zoom in [n times]
+			    i[n]  [n]  : zoom in  [n times]
 			    o[ut] [n]  : zoom out [n times]
 
 			    e[fficient]: enable efficient input mode
 			                 (single letters, no Enter)
 			    E          : disable efficient input mode
+
+			    d[ebug]    : toggle debug mode
 
 			    q[uit]     : self-explanatory
 
@@ -104,22 +104,25 @@ parse_command() {
 			echo "    no galaxy matching search string: $2"
 			;;
 		m | modsub2)
-			parse_command 'reset'
-			for image in "${galaxy_dirs[$galaxy_index]}"/*modsub2.fits; do
-				parse_command 'load' "$image" "$(sed -e 's/_modsub2\.fits$/_mod2.reg/g' <<< "$image")"
-			done
-			parse_command 'clear'
-			xpaset -p ds9 tile yes
+			parse_command 'view' '_modsub2.fits'
 			parse_command 'zscale'
 			;;
 		s | source)
-			parse_command 'reset'
-			for image in "${galaxy_dirs[$galaxy_index]}"/VCC????_?.fits; do
-				parse_command 'load' "$image" "$(sed -e 's/\.fits$/_mod2.reg/g' <<< "$image")"
-			done
-			parse_command 'clear'
-			xpaset -p ds9 tile yes
+			parse_command 'view' '.fits'
 			parse_command 'log'
+			;;
+		view)
+			parse_command 'reset'
+			for band in 'g' 'i' 'r' 'u' 'z'; do
+				dir="${galaxy_dirs[$galaxy_index]}"
+				galaxy="$(basename "$dir")"
+				image="${dir}/${galaxy}_${band}$2"
+				region="${dir}/${galaxy}_${band}_mod2.reg"
+				parse_command 'load' "$image" "$region"
+			done
+			# parse_command 'clear'
+			xpaset -p ds9 tile yes
+			[ "$zoom" != '1' ] && parse_command 'zoom'
 			;;
 		r | region)
 			for_each_frame regions show yes			
@@ -136,12 +139,29 @@ parse_command() {
 			for_each_frame scale mode zmax
 			;;
 		i | in)
-			for_each_frame zoom 1.25
-			is_integer "$2" && [ $2 -gt 1 ] && parse_command 'in' $(($2 - 1))
+			times="$2"
+			if [ -z "$times" ]; then
+				times="1"
+			elif ! is_integer "$times"; then
+				echo "not an integer"
+				return
+			fi
+			zoom="$(bc -l <<< "$zoom * 1.25^($times)")"
+			parse_command 'zoom'
 			;;
 		o | out)
-			for_each_frame zoom 0.8
-			is_integer "$2" && [ $2 -gt 1 ] && parse_command 'out' $(($2 - 1))
+			times="$2"
+			if [ -z "$times" ]; then
+				times="1"
+			elif ! is_integer "$times"; then
+				echo "not an integer"
+				return
+			fi
+			zoom="$(bc -l <<< "$zoom * 0.8^($times)")"
+			parse_command 'zoom'
+			;;
+		zoom)
+			for_each_frame zoom to $zoom
 			;;
 		e | efficient)
 			read_opts='-n1'
@@ -149,14 +169,21 @@ parse_command() {
 		E)
 			read_opts=''
 			;;
+		d | debug)
+			if [ "$debug" = 'true' ]; then
+				debug='false'
+			else
+				debug='true'
+			fi
+			;;
 		q | quit)
 			exit 0
 			;;
 		increment)
-			parse_command seek $((galaxy_index + 1))
+			parse_command 'seek' $((galaxy_index + 1))
 			;;
 		decrement)
-			parse_command seek $((galaxy_index - 1))
+			parse_command 'seek' $((galaxy_index - 1))
 			;;
 		seek)
 			if ! is_integer "$2"; then
@@ -173,18 +200,20 @@ parse_command() {
 				echo "    cannot seek past the last galaxy"
 				galaxy_index=$((galaxy_count - 1))
 			fi
+
+			# reset zoom when viewing another galaxy
+			zoom=1
+
 			parse_command 'modsub2'
 			;;
 		reset)
 			xpaset -p ds9 frame delete all
 			frame_count=0
 			regions=
-			zoom=1
 			;;
 		load)
-			echo "    loading $2"
 			xpaset -p ds9 frame new
-			xpaset -p ds9 fits "$2"
+			[ -f "$2" ] && echo "    loading $2" && xpaset -p ds9 fits "$2"
 			[ -f "$3" ] && xpaset -p ds9 regions load "$3"
 			((frame_count++))
 			;;
