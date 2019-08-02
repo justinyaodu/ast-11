@@ -59,14 +59,6 @@ if run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fi
 
 	# perform final subtraction
 	assert_successful ./subtract.sh "$original_image" "${name_base}_mod2.fits" "${name_base}_modsub2.fits"
-
-else
-	# if masking unsuccessful, no second pass required
-	# simply copy/rename files
-	echo_debug "masking unsuccessful, simply faking second pass"
-	mv "${name_base}_mod1.tab" "${name_base}_mod2.tab"
-	mv "${name_base}_mod1.reg" "${name_base}_mod2.reg"
-	mv "${name_base}_modsub1.fits" "${name_base}_modsub2.fits"
 fi
 
-./cleanup.sh "$original_image"
+# ./cleanup.sh "$original_image"

@@ -38,7 +38,7 @@ fi
 assert_exists "$input_image"
 assert_does_not_exist "$output_image" "$copy_image"
 
-threshold="1.5"
+threshold="2.0"
 iterations="0"
 
 # create mask

@@ -17,8 +17,9 @@ log_file="$(strip_extension "$output_image")_model.log"
 # abort if input file doesn't exist
 assert_exists "$table_file"
 
-# if output file exists, also abort
-assert_does_not_exist "$output_image"
+# if output file exists, remove it
+# it might be left over from a crashed cmodel run, so clean it up
+remove_if_exists "$output_image"
 
 # get background light value from table
 background="$(./background.sh "$table_file")"

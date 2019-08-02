@@ -16,6 +16,12 @@ image_file="$2"
 # ellipticity, position angle, initial sma, min sma, max sma
 assert_exists "$catalog_file"
 shape_properties="$(python -c "import read_catalog; read_catalog.get_properties(\"$galaxy_and_filter\", \"$catalog_file\")")"
+
+# if catalog wasn't read successfully, abort
+if [ -z "$shape_properties" ]; then
+	touch "$image_file.not-in-catalog"
+	exit 1
+fi
 echo_debug "ell pa sma0 minsma maxsma: $shape_properties"
 
 # x and y position of galaxy center

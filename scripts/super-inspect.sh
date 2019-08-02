@@ -104,7 +104,7 @@ parse_command() {
 			echo "    no galaxy matching search string: $2"
 			;;
 		m | modsub2)
-			parse_command 'view' '_modsub4.fits' '_modsub3.fits' '_modsub2.fits'
+			parse_command 'view' '_modsub4.fits' '_modsub3.fits' '_modsub2.fits' '_modsub1.fits'
 			parse_command 'zscale'
 			;;
 		s | source)
@@ -120,8 +120,10 @@ parse_command() {
 				galaxy="$(basename "$dir")"
 
 				xpaset -p ds9 frame new
+				((frame_count++))
 
 				region="${dir}/${galaxy}_${band}_mod2.reg"
+				[ ! -f "$region" ] && region="${dir}/${galaxy}_${band}_mod1.reg"
 
 				for suffix in "$@"; do
 					image="${dir}/${galaxy}_$band$suffix"
@@ -221,7 +223,6 @@ parse_command() {
 		load)
 			[ -f "$2" ] && echo "    loading $2" && xpaset -p ds9 fits "$2"
 			[ -f "$3" ] && xpaset -p ds9 regions load "$3"
-			((frame_count++))
 			;;
 		*)
 			echo "unknown command: $1"
