@@ -5,13 +5,12 @@ import sys
 import numpy
 
 def read_catalog(catalog_file_name):
+  ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc=([] for i in range(13))
   hdul=fits.open(catalog_file_name)
   data=hdul[1].data
-  arr=numpy.zeros(30,30) 
-  for x in range(30):
-	for y in range(30):
-		seperate_data=data[y]
-		arr[x][y]=seperate_data[y]
-  hdul.info()
-  print(arr[0])
+  for x in range(31):
+	sep_data=data[x]
+	ra.append(sep_data[2])
+  #hdul.info()
+  print(ra)
   sys.exit(0)
