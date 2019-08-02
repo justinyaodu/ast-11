@@ -33,8 +33,6 @@ def check_masking(mask_filename):
     # count_in_ellipse is to count the number of pixels being tested
     # count_masked is to count how many pixels in ellipse are masked
     # count_good_isophotes is to count how many of the isophotes pass the test (if enough don't pass, then the mask = bad)
-    count_in_ellipse     = 0
-    count_masked         = 0
     count_isophotes      = 0
     count_good_isophotes = 0
 
@@ -53,6 +51,9 @@ def check_masking(mask_filename):
     ell[ell == -10000] = 0
     pa[pa == -10000] = 0
 
+    # remember what pixels have already been checked
+    checked = np.zeros((width, height))
+
     # using the isophotes to get the percentage of masked/total
     # i is the index to go through each array value
     # don't analyze the largest isophotes, because overmasking typically isn't
@@ -60,6 +61,9 @@ def check_masking(mask_filename):
     # don't check the smallest ones either
     for i in range(int(len(x0) * 2 / 5), int(len(x0) * 4 / 5)):
         
+        count_in_ellipse = 0
+        count_masked     = 0
+
         isophote = Ellipse(x0[i], y0[i], ell[i], pa[i], sma[i])
 
         # create the bounding box; isophote is guaranteed to not exceed this
@@ -71,16 +75,22 @@ def check_masking(mask_filename):
         # check every pixel in bounding box
         for x in range(min_x, max_x):
             for y in range(min_y, max_y):
-                if isophote.contains_point(x, y):
+                if isophote.contains_point(x, y) and checked[x][y] == 0:
+                    checked[x][y] = i
                     count_in_ellipse += 1
                     if data[y, x] != 0: count_masked += 1
         
         count_isophotes += 1
 
-        print "isophote " + str(i) + ": ", count_masked, "of", count_in_ellipse, "pixels masked", "(" + "{0:.2f}".format(count_masked / count_in_ellipse * 100) + "%)"
+        if count_in_ellipse == 0:
+            percent = 0
+        else:
+            percent = 100 * count_masked / count_in_ellipse
+
+        print "isophote " + str(i) + ": ", count_masked, "of", count_in_ellipse, "pixels masked", "(" + "{0:.2f}".format(percent) + "%)"
         
         # determine if fraction of masked pixels is satisfactory
-        if count_masked / count_in_ellipse <= 0.2:
+        if percent <= 30:
             count_good_isophotes += 1
 
     # determine if fraction of good isophotes is satisfactory

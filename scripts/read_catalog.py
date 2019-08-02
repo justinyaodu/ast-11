@@ -45,10 +45,47 @@ def read_properties(galaxy_and_filter, catalog):
         if (line[1] == galaxy):
             ell = float(line[ell_index + offset])
             pa  = float(line[pa_index  + offset])
-            sma = float(line[sma_index + offset])
+            if filter_name == "r":
+                print >> sys.stderr, "guessing sma from other bands"
+                sma = max(float(line[sma_index + 0]),
+                          float(line[sma_index + 1]),
+                          float(line[sma_index + 3]),
+                          float(line[sma_index + 4]))
+            else:
+                sma = float(line[sma_index + offset])
             return ell, pa, sma
-    print >> sys.stderr, "warning: galaxy not in catalog"
-    return -100.0, -100.0, -100.0
+
+    print >> sys.stderr, "galaxy not in catalog, guessing sma from mag"
+
+    mags_file = open("mags.tsv", "r")
+    mags_lines = []
+    for line in mags_file:
+        mags_lines.append(np.array(re.split("\s+", line)))
+
+    parsed_mags = np.array(mags_lines)
+
+    for i in range(len(parsed_mags)):
+        if parsed_mags[i][0] == galaxy:
+            mag = float(parsed_mags[i][1])
+
+            # best-fit lines from linear regression
+            if   filter_name == "u": m = -6.61; b = 188
+            elif filter_name == "g": m = -6.57; b = 187
+            elif filter_name == "i": m = -5.82; b = 173
+            elif filter_name == "z": m = -5.52; b = 168
+            # no data, use something between g and i
+            elif filter_name == "r": m = -6.20; b = 180
+            else: raise ValueError("invalid filter")
+
+            sma = m * mag + b
+            
+            # regression done using pixel values, convert back to arcsec
+            sma *= 0.187
+
+            return -100.0, -100.0, sma
+
+    print >> sys.stderr, "no magnitude anywhere?"
+    sys.exit(1)
 
 # prints the ellipticity, position angle, initial SMA, min SMA, and max SMA
 def get_properties(galaxy_and_filter, catalog):
@@ -76,8 +113,7 @@ def get_properties(galaxy_and_filter, catalog):
     # go all the way to the center
     sma_min = 0
 
-    # safety factor is supposed to make sure the galaxy edges aren't clipped
-    # even if the catalog values are off
+    # use some multiple of effective radius to guess the outer edge
     sma_max = sma * 5
     print ell, pa, sma_initial, sma_min, sma_max
     return

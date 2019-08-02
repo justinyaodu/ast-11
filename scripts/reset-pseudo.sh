@@ -12,6 +12,6 @@ directory="$(dirname "$1")"
 
 galaxy_and_filter="$(get_galaxy_and_filter "$original_image")"
 
-for suffix in "_createmodel3.log"; do
-	rm "$directory/$galaxy_and_filter$suffix"
+for suffix in "_mod3_fit.log" "_mod3.fits" "_mod3_model.log" "_mod3.reg" "_mod3.tab" "_modsub3.fits" "_createmodel3.log"; do
+	rm -v "$directory/$galaxy_and_filter$suffix"
 done
