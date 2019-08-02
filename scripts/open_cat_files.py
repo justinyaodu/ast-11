@@ -1,4 +1,3 @@
-
 import astropy
 from astropy.io import fits
 import sys
@@ -17,7 +16,7 @@ def read_catalog(catalog_file_name):
 		current_arr=arr[index]
 		current_arr[index]=sep_data[y]
 		index=index+1
-  print(x_sex)
+  for x in range(31):
+	print x_sex[x] + " " + y_sex[x] + " " + ra[x] + " " + dec[x] + " " + umag[x] + " " + gmag[x] + " " + rmag[x]  + " " + imag[x]  + " " + zmag[x] + " " + umagerr[x] + " " + gmagerr[x] + " " + rmagerr[x] + " " + imagerr[x] + " " + zmagerr[x] + " " + p_gc[x]
   #hdul.info()
-  #print(ra)
   sys.exit(0)
