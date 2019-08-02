@@ -52,7 +52,7 @@ while ! ./excessive-mask-check.sh "$model_table" "$output_image"; do
 	if [ "$iterations" -eq 10 ]; then
 		echo_debug "too many remasking iterations, giving up and disabling masking"
 		rm "$output_image"
-		exit 0
+		exit 1
 	fi
 
 	# increase threshold

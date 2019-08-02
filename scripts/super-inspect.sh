@@ -104,7 +104,7 @@ parse_command() {
 			echo "    no galaxy matching search string: $2"
 			;;
 		m | modsub2)
-			parse_command 'view' '_modsub2.fits'
+			parse_command 'view' '_modsub4.fits' '_modsub3.fits' '_modsub2.fits'
 			parse_command 'zscale'
 			;;
 		s | source)
@@ -113,14 +113,21 @@ parse_command() {
 			;;
 		view)
 			parse_command 'reset'
+			# make $@ contain all suffixes
+			shift
 			for band in 'g' 'i' 'r' 'u' 'z'; do
 				dir="${galaxy_dirs[$galaxy_index]}"
 				galaxy="$(basename "$dir")"
-				image="${dir}/${galaxy}_${band}$2"
+
+				xpaset -p ds9 frame new
+
 				region="${dir}/${galaxy}_${band}_mod2.reg"
-				parse_command 'load' "$image" "$region"
+
+				for suffix in "$@"; do
+					image="${dir}/${galaxy}_$band$suffix"
+					[ -f "$image" ] && parse_command 'load' "$image" "$region" && break
+				done
 			done
-			# parse_command 'clear'
 			xpaset -p ds9 tile yes
 			[ "$zoom" != '1' ] && parse_command 'zoom'
 			;;
@@ -212,7 +219,6 @@ parse_command() {
 			regions=
 			;;
 		load)
-			xpaset -p ds9 frame new
 			[ -f "$2" ] && echo "    loading $2" && xpaset -p ds9 fits "$2"
 			[ -f "$3" ] && xpaset -p ds9 regions load "$3"
 			((frame_count++))

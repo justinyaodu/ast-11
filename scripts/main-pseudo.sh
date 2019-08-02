@@ -40,7 +40,7 @@ fi
 
 # copy pixel mask
 old_mask="$name_base.fits.pl"
-[ -f "$old_mask" ] && mv "$old_mask" "$old_mask.old"
+[ -f "$old_mask" ] && [ ! -f "$old_mask.old" ] && mv "$old_mask" "$old_mask.old"
 reference_mask="${name_base::-9}$reference.fits.pl"
 cp "$reference_mask" "$old_mask"
 
