@@ -1,5 +1,0 @@
-images,s,a,"/m/mirror/processing/VCC01/VCC1999/VCC1999_i_flag.fits[2]",,,"image names"
-imlist,s,h,"*.imh,*.fits,*.pl,*.qp,*.hhh",,,"default image names"
-longheader,b,h,no,,,"print header in multi-line format"
-userfields,b,h,yes,,,"print the user fields (instrument parameters)"
-mode,s,h,"ql",,,
