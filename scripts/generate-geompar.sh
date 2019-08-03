@@ -19,8 +19,7 @@ shape_properties="$(python -c "import read_catalog; read_catalog.get_properties(
 
 # if catalog wasn't read successfully, abort
 if [ -z "$shape_properties" ]; then
-	touch "$image_file.not-in-catalog"
-	exit 1
+	abort "could not obtain catalog data"
 fi
 echo_debug "ell pa sma0 minsma maxsma: $shape_properties"
 

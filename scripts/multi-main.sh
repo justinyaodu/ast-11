@@ -20,6 +20,9 @@ for galaxy_dir in "$containing_dir"/*; do
 	# filters in order of preference
 	# TODO ask mentors about which are best, after g
 	for filter in "g" "u" "i" "z" "r"; do
+		# use presence of indicator file as a safe stop signal
+		[ -f "STOP" ] && abort "stop file exists"
+
 		file="$galaxy_dir/${galaxy_name}_${filter}.fits"
 		
 		# skip if no image exists for filter
@@ -27,12 +30,6 @@ for galaxy_dir in "$containing_dir"/*; do
 		
 		print_banner "processing image file $file"
 
-		if ! ./main.sh "$file"; then
-			# mark as failed
-			touch "$file.failed"
-		fi
-
-		# use presence of indicator file as a safe stop signal
-		[ -f "STOP" ] && abort "stop file exists"
+		./main.sh "$file"
 	done
 done

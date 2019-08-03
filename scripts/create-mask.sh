@@ -16,10 +16,10 @@ model_table="$2"
 
 # assuming the input file ends with "_modsub1.fits"
 # this removes those 13 characters
-output_image="${input_image::-13}_seg.fits"
+seg_image="${input_image::-13}_seg.fits"
 
 # removes those same characters, but ends with .fits.pl instead
-copy_image="${input_image::-13}.fits.pl"
+pixel_list="${input_image::-13}.fits.pl"
 
 clean_option="$3"
 
@@ -27,7 +27,7 @@ clean_option="$3"
 if [ "$clean_option" != "" ]; then
 	# if option is correctly specified, delete files
 	if [ "$clean_option" == "--clean" ]; then
-		rm -f "$output_image" "$copy_image"
+		rm -f "$seg_image" "$pixel_list"
 		exit 0
 	# otherwise, print usage message
 	else
@@ -36,22 +36,23 @@ if [ "$clean_option" != "" ]; then
 fi
 
 assert_exists "$input_image"
-assert_does_not_exist "$output_image" "$copy_image"
+assert_does_not_exist "$seg_image"
+remove_if_exists "$pixel_list"
 
 threshold="2.0"
 iterations="0"
 
 # create mask
-./sextractor-mask.sh "$input_image" "$output_image" "$threshold"
+./sextractor-mask.sh "$input_image" "$seg_image" "$threshold"
 
 # while image is overly masked, increase the threshold and try again
-while ! ./excessive-mask-check.sh "$model_table" "$output_image"; do
+while ! ./excessive-mask-check.sh "$model_table" "$seg_image"; do
 
 	# if iterated too many times, give up and continue with current mask
 	(( iterations++ ))
 	if [ "$iterations" -eq 10 ]; then
 		echo_debug "too many remasking iterations, giving up and disabling masking"
-		rm "$output_image"
+		rm "$seg_image"
 		exit 1
 	fi
 
@@ -60,11 +61,16 @@ while ! ./excessive-mask-check.sh "$model_table" "$output_image"; do
 	echo_debug "masking deemed too aggressive, increasing threshold to $threshold"
 
 	# remove output file
-	rm "$output_image"
+	rm "$seg_image"
 
 	# try masking again with increased threshold
-	./sextractor-mask.sh "$input_image" "$output_image" "$threshold"
+	./sextractor-mask.sh "$input_image" "$seg_image" "$threshold"
 done
 
-# copy somegalaxy_seg.fits to somegalaxy.fits.pl
-./imcopy.sh "$output_image" "$copy_image"
+# combine converted flag image and seg image
+converted_flag_image="${input_image::-13}_flag_converted.fits"
+mask_image="${input_image::-13}_mask.fits"
+assert_successful ./imarith.sh "$seg_image" "+" "$converted_flag_image" "$mask_image"
+
+# convert mask image to pixel list format
+assert_successful ./imcopy.sh "$mask_image" "$pixel_list"

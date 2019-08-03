@@ -50,4 +50,4 @@ reference_table="${name_base::-9}${reference}_mod2.tab"
 assert_successful run_and_log "${name_base}_createmodel3.log" ./create-model-pseudo.sh "$original_image" "3" "$reference_table"
 
 # perform subtraction
-assert_successful ./subtract.sh "$original_image" "${name_base}_mod3.fits" "${name_base}_modsub3.fits"
+assert_successful ./imarith.sh "$original_image" "-" "${name_base}_mod3.fits" "${name_base}_modsub3.fits"

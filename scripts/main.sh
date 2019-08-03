@@ -16,23 +16,9 @@ assert_exists "$original_image"
 # e.g. "/some/path/VCC1827_i.fits" becomes "/some/path/VCC1827_i"
 name_base=${original_image::-5}
 
-# check if final image already exists
-modsub2="${name_base}_modsub2.fits"
-if [ -f "$modsub2" ]; then
-
-	# if original image has been updated since modsub2 was generated
-	if [ "$original_image" -nt "$modsub2" ]; then
-
-		echo_debug "final image is outdated; resetting and running again"
-
-		# reset directory, so that we can run again
-		./reset.sh "$original_image"
-	else
-		echo_debug "modsub2 image already exists and is up to date, skipping"
-		exit 0
-	fi
-elif [ -f "$original_image.failed" ]; then
-	abort "last run failed; will not attempt rerun"
+if [ -f "$original_image.status" ]; then
+	echo_debug "already ran on this image; skipping"
+	exit 0
 fi
 
 # silently delete files if any exist
@@ -44,21 +30,39 @@ fi
 # alternatively, we could invent "fake" VCC numbers for those objects...
 galaxy_and_filter="$(get_galaxy_and_filter "$original_image")"
 
+# function to finish up, creating appropriate status file
+finish() {
+	echo "$1" > "$original_image.status"
+	exit 0
+}
+
+# convert flag image
+./mask-from-flag.sh "$(sed -e 's/\.fits/_flag.fits/g' <<< "$original_image")"
+# create initial mask from flag image only
+./imcopy.sh "$(sed -e 's/\.fits/_flag_converted.fits/g' <<< "$original_image")" "$original_image.pl"
+
 # generate first pass light model
-assert_successful run_and_log "${name_base}_createmodel1.log" ./create-model.sh "$original_image" "1"
+run_and_log "${name_base}_createmodel1.log" ./create-model.sh "$original_image" "1" || finish 0
 
 # perform subtraction
-assert_successful ./subtract.sh "$original_image" "${name_base}_mod1.fits" "${name_base}_modsub1.fits"
+./imarith.sh "$original_image" "-" "${name_base}_mod1.fits" "${name_base}_modsub1.fits" || finish 0
 
-# generate mask for remaining bright objects; enters if block if successful
-if run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"; then
+# generate mask for remaining bright objects
+# enters if block if masking failed
+if ! run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"; then
+	# use modsub1 as the final image
+	finish 1
+else
 	echo_debug "running second pass"
 
 	# generate second pass light model
-	assert_successful run_and_log "${name_base}_createmodel2.log" ./create-model.sh "$original_image" "2"
+	run_and_log "${name_base}_createmodel2.log" ./create-model.sh "$original_image" "2" || finish 1
 
 	# perform final subtraction
-	assert_successful ./subtract.sh "$original_image" "${name_base}_mod2.fits" "${name_base}_modsub2.fits"
+	./imarith.sh "$original_image" "-" "${name_base}_mod2.fits" "${name_base}_modsub2.fits" || finish 1
+
+	# everything successful
+	finish 2
 fi
 
 # ./cleanup.sh "$original_image"
