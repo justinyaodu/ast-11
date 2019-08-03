@@ -25,6 +25,9 @@ echo "updating images..."
 			# read each line of text from pipe
 			while read -r line; do
 
+				# skip imUrlList.txt files
+				grep -q 'imUrlList.txt$' <<< "$line" && continue
+
 				# extract the timestamp, file size, and file name
 				timestamp="$(echo "$line" | grep -o "^[0-9]*")"
 
