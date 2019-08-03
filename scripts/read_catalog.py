@@ -65,6 +65,8 @@ def get_properties(galaxy_and_filter, catalog):
     if (ell == -100.0):
         print >> sys.stderr, "warning: no ell in catalog"
         ell = 0.2
+    elif (ell < 0.01):
+        ell = 0.01
 
     if (pa == -100.0):
         print >> sys.stderr, "warning: no pa in catalog"
