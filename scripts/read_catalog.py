@@ -55,35 +55,6 @@ def read_properties(galaxy_and_filter, catalog):
                 sma = float(line[sma_index + offset])
             return ell, pa, sma
 
-    print >> sys.stderr, "galaxy not in catalog, guessing sma from mag"
-
-    mags_file = open("mags.tsv", "r")
-    mags_lines = []
-    for line in mags_file:
-        mags_lines.append(np.array(re.split("\s+", line)))
-
-    parsed_mags = np.array(mags_lines)
-
-    for i in range(len(parsed_mags)):
-        if parsed_mags[i][0] == galaxy:
-            mag = float(parsed_mags[i][1])
-
-            # best-fit lines from linear regression
-            if   filter_name == "u": m = -6.61; b = 188
-            elif filter_name == "g": m = -6.57; b = 187
-            elif filter_name == "i": m = -5.82; b = 173
-            elif filter_name == "z": m = -5.52; b = 168
-            # no data, use something between g and i
-            elif filter_name == "r": m = -6.20; b = 180
-            else: raise ValueError("invalid filter")
-
-            sma = m * mag + b
-            
-            # regression done using pixel values, convert back to arcsec
-            sma *= 0.187
-
-            return -100.0, -100.0, sma
-
     print >> sys.stderr, "no magnitude anywhere?"
     sys.exit(1)
 

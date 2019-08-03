@@ -45,6 +45,6 @@ assert_does_not_exist "$region_file"
 center="$(python -c "import fits_center; fits_center.get_fits_center(\"$image_file\")")"
 
 galaxy_and_filter="$(grep -o "VCC[0-9][0-9][0-9][0-9]_[ugriz]" <<< "$image_file")"
-properties="$(python -c "import read_catalog; ell, pa, sma = read_catalog.read_properties(\"$galaxy_and_filter\", \"gal_list.cat\"); print ell, pa, sma")"
+properties="$(python -c "import read_catalog; ell, pa, sma = read_catalog.read_properties(\"$galaxy_and_filter\", \"gal_list_all.cat\"); print ell, pa, sma")"
 
 generate_region_file $center $properties "$region_file"
