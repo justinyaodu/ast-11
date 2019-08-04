@@ -2,6 +2,13 @@ import sys
 import re
 import numpy as np
 
+# some galaxies will fail the subtraction pipeline because the
+# mask created from the flag image covers up too much of the galaxy
+# when this happens, images of a galaxy in all bands will fail
+
+# this script takes the output of ./foo.sh
+# and outputs a list of all the galaxies that failed in all bands
+
 file = open(sys.argv[1], "r")
 line_list = []
 for line in file:
