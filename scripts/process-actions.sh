@@ -19,6 +19,12 @@ process_action() {
 
 	original_image="$containing_dir/$galaxy/$galaxy_and_filter.fits"
 
+	# if this galaxy image isn't in this dir, then skip it
+	if [ ! -f "$original_image" ]; then
+		echo_debug "image not in this dir"
+		return
+	fi
+
 	case "$action" in
 		ignore | copy)
 			echo_debug "doing nothing"
@@ -30,7 +36,7 @@ process_action() {
 			;;
 		rmf)
 			echo_debug "running ring median filter"
-			echo ring-median.sh "$original_image"
+			./ring-median.sh "$original_image"
 			;;
 		*)
 			abort "unknown action: '$action'"
