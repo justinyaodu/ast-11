@@ -21,33 +21,36 @@ name_base=${original_image::-5}
 # check if final image already exists
 modsub3="${name_base}_modsub3.fits"
 if [ -f "$modsub3" ]; then
-
-	# if original image has been updated since modsub3 was generated
-	if [ "$original_image" -nt "$modsub3" ]; then
-
-		echo_debug "final image is outdated; resetting and running again"
-
-		# reset directory, so that we can run again
-		./reset.sh "$original_image"
-	else
-		echo_debug "modsub3 image already exists and is up to date, skipping"
-		exit 0
-	fi
+	echo_debug "modsub3 image already exists, skipping"
+	exit 0
 fi
 
 # silently delete files if any exist
 ./reset-pseudo.sh "$original_image" > /dev/null 2>&1
 
-# copy pixel mask
-old_mask="$name_base.fits.pl"
-[ -f "$old_mask" ] && [ ! -f "$old_mask.old" ] && mv "$old_mask" "$old_mask.old"
+# copy mask from reference image, if one exists
 reference_mask="${name_base::-9}$reference.fits.pl"
-cp "$reference_mask" "$old_mask"
+if [ -f "$reference_mask" ]; then
+	# backup old pixel mask
+	mask="$name_base.fits.pl"
+	if [ -f "$mask" ] && [ ! -f "$mask.old" ]; then
+		mv "$mask" "$mask.old"
+	else
+		rm "$mask"
+	fi
 
+	cp "$reference_mask" "$mask"
+fi
+
+# use mod2 table if it exists, otherwise mod1 table, otherwise abort
 reference_table="${name_base::-9}${reference}_mod2.tab"
+[ -f "$reference_table" ] || reference_table="${name_base::-9}${reference}_mod1.tab"
+assert_exists "$reference_table"
 
 # generate light model
 assert_successful run_and_log "${name_base}_createmodel3.log" ./create-model-pseudo.sh "$original_image" "3" "$reference_table"
 
 # perform subtraction
 assert_successful ./imarith.sh "$original_image" "-" "${name_base}_mod3.fits" "${name_base}_modsub3.fits"
+
+echo "3" > "$original_image.status"
