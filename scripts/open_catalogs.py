@@ -11,12 +11,16 @@ class SextractorObj:
 		self.ra=ra
 		self.dec=dec
 		self.magnitude=magnitude
+	def __str__(self):
+		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: "+str(self.magnitude)
 class FitsObj:
 	def __init__(self,ra,dec,mag):
 		self.ra=ra
 		self.dec=dec
 		self.mag=mag
-
+	def __str__(self):
+		return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)
+	
 def open_catalog(catalog_file_name,sextractor_catalog):
 	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc=([] for i in range(15))
 	arr=[x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc]
@@ -24,7 +28,7 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 	data=hdul[1].data
 	arr_indexes=[0,1,2,3,5,6,7,8,9,11,12,13,14,15,28]
 	index=0
-	for x in len(x_sex):
+	for x in range(int(hdul[0]["NAXIS2"])):
 		sep_data=data[x]
 		for y in arr_indexes:
 			current_arr=arr[index]
@@ -52,10 +56,14 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 	elif band_name=="z":
 		test_mags=zmag
 		
-	for fits_index in len(x_sex):
-		fits_obj.append(FitsObj(ra[fits_index],dec[fits_index],test_mags[fits_index])
+	for fits_index in range(len(x_sex)):
+		fits_obj.append(FitsObj(ra[fits_index],dec[fits_index],test_mags[fits_index]))
 				
-	for sex_index in len(s_x_image):
+	for sex_index in range(len(s_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
-		sex_obj.append(SextractorObj(s_alpha[sex_index],s_delta[sex_index],s_mag_iso[sex_index])
-	print(fits_obj,sex_obj)			       
+		sex_obj.append(SextractorObj(s_alpha[sex_index],s_delta[sex_index],s_mag_iso[sex_index]))
+	#for c in fits_obj:
+		#print(str(c))
+	print(len(x_sex))
+	#for d in sex_obj:
+	#	print(str(d))		       
