@@ -1,3 +1,6 @@
+#code to output a table similar to that of Sextractor's catalog table
+#outputs a table form the catalog fits file found from photcat_indv (Raja's server)
+
 import astropy
 from astropy.io import fits
 import sys
