@@ -17,8 +17,6 @@ for galaxy_dir in "$containing_dir"/*; do
 
 	galaxy_name="$(basename "$galaxy_dir")"
 
-	# filters in order of preference
-	# TODO ask mentors about which are best, after g
 	for filter in "g" "u" "i" "z" "r"; do
 		# use presence of indicator file as a safe stop signal
 		[ -f "STOP" ] && abort "stop file exists"

@@ -53,11 +53,12 @@ parse_command() {
 			    
 			    p[rev]     : view previous galaxy
 			    n[ext]     : view next galaxy
-			    l[ist]     : list all loaded galaxies
+			    a[ll]      : list all loaded galaxies
 			    f[ind]     : find galaxy by name
 			    
 			    m[odsub2]  : load modsub2 images
 			    s[ource]   : load original images
+			    [mas]k     : load mask images
 
 			    r[egion]   : load regions for each image
 			    c[lear]    : clear all regions
@@ -84,7 +85,7 @@ parse_command() {
 		n | next)
 			parse_command 'increment'
 			;;
-		l | list)
+		a | all)
 			for galaxy in "${galaxy_dirs[@]}"; do
 				echo "$galaxy"
 			done
@@ -109,6 +110,10 @@ parse_command() {
 			;;
 		s | source)
 			parse_command 'view' '.fits'
+			parse_command 'log'
+			;;
+		k | mask)
+			parse_command 'view' '_mask.fits' '_flag_converted.fits'
 			parse_command 'log'
 			;;
 		view)

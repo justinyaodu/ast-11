@@ -31,5 +31,10 @@ for line in parsed_file:
     count[galaxy] += 1
     if line[1] == "0": count_failed[galaxy] += 1
 
+total_failed = 0
 for galaxy in count:
-    if count[galaxy] == count_failed[galaxy]: print galaxy
+    if count[galaxy] == count_failed[galaxy]:
+        print galaxy
+        total_failed += count_failed[galaxy]
+
+print >> sys.stderr, "total images failed from flag mask:", total_failed
