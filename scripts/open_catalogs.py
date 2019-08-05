@@ -28,7 +28,7 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 	data=hdul[1].data
 	arr_indexes=[0,1,2,3,5,6,7,8,9,11,12,13,14,15,28]
 	index=0
-	for x in range(int(hdul[0]["NAXIS2"])):
+	for x in range(len(data)):
 		sep_data=data[x]
 		for y in arr_indexes:
 			current_arr=arr[index]
@@ -62,8 +62,7 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 	for sex_index in range(len(s_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
 		sex_obj.append(SextractorObj(s_alpha[sex_index],s_delta[sex_index],s_mag_iso[sex_index]))
-	#for c in fits_obj:
-		#print(str(c))
-	print(len(x_sex))
-	#for d in sex_obj:
-	#	print(str(d))		       
+	for c in fits_obj:
+		print(str(c))
+	for d in sex_obj:
+		print(str(d))		       
