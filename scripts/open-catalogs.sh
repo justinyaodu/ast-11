@@ -14,4 +14,4 @@ sex_catalog_file="$2"
 assert_exists "$fits_catalog_file" "$sex_catalog_file"
 
 # call Python script
-python -c "import open_cat_files; open_cat_files.read_catalog(\"$fits_catalog_file\",\"$sex_catalog_file\")"
+python -c "import open_catalogs; open_catalogs.open_catalog(\"$fits_catalog_file\",\"$sex_catalog_file\")"
