@@ -32,7 +32,7 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 			index=index+1
 		index=0
 	#opening the sextractor catalog	
-	s_nmb,s_x_image,s_y_image,s_alpha,s_delta,s_a_world,s_erra_world,s_b_world,s_errb_world,s_theta_pa,s_errtheta_pa,s_elongation,s_ellip,s_mag_auto,s_magerr_auto,s_mag_best,s_magerr_best,s_mag_iso,s_magerr_iso,s_mag_isocor,s_magerr_isocor,s_mag_petro,s_magerr_petro,s_mag_aper,magerr_aper,s_flux_rad,s_kron_rad,s_petro_rad,s_mu_max,s_background,s_isoarea_image,s_fwhm_image,s_flags,s_class_star=np.loadtxt(sextractor_catalog,unpack=True)
+	s_nmb,s_x_image,s_y_image,s_alpha,s_delta,s_a_world,s_erra_world,s_b_world,s_errb_world,s_theta_pa,s_errtheta_pa,s_elongation,s_ellip,s_mag_auto,s_magerr_auto,s_mag_best,s_magerr_best,s_mag_iso,s_magerr_iso,s_mag_isocor,s_magerr_isocor,s_mag_petro,s_magerr_petro,s_mag_aper,u_25,u_26,u_27,u_28,u_29,u_30,u_31,s_magerr_aper,u_33,u_34,u_35,u_36,u_37,u_38,u_39,s_flux_rad,s_kron_rad,s_petro_rad,s_mu_max,s_background,s_isoarea_image,s_fwhm_image,s_flags,s_class_star=np.loadtxt(sextractor_catalog,unpack=True)
 	
 	#making the objects
 	band_name=sextractor_catalog[8]
