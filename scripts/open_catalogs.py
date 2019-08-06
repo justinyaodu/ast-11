@@ -61,7 +61,7 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 				
 	for sex_index in range(len(s_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
-		sex_obj.append(SextractorObj(s_alpha[sex_index],s_delta[sex_index],s_mag_iso[sex_index]))
+		sex_obj.append(SextractorObj(s_alpha[sex_index],s_delta[sex_index],s_mag_aper[sex_index]))
 	for c in fits_obj:
 		print(str(c))
 	for d in sex_obj:
