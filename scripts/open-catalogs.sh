@@ -5,7 +5,7 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 2 ] || abort "usage: $0 <galaxyname_NGVS_cat.fits> <sextractor_catalog_file>"
+[ $# -eq 2 ] || abort "usage: $0 <galaxyname_NGVS_cat.fits> <gband_sextractor_catalog>"
 
 fits_catalog_file="$1"
 sex_catalog_file="$2"
