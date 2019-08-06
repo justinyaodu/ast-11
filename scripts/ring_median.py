@@ -8,7 +8,6 @@ np.set_printoptions(threshold=sys.maxsize)
 def outOfBounds(xcor, ycor, xlen, ylen):
     return xcor >= xlen or ycor >= ylen or xcor < 0 or ycor < 0
 
-'''
 a = [1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10]
 
 b = list(a)
@@ -16,7 +15,9 @@ b.reverse()
 
 ring_x = np.array(a + [-i for i in a] + a + [-i for i in a] + [10, 0, -10, 0])
 ring_y = np.array(b + [-i for i in b] + [-i for i in b] + b + [0, 10, 0, -10])
-'''
+
+print ring_x, ring_y
+sys.exit(0)
 
 ring_x = np.array([0, 4, 7, 8, 7, 4, 0, -4, -7, -8, -7, -4])
 ring_y = np.array([8, 7, 4, 0, -4, -7, -8, -7, -4, 0, 4, 7])
@@ -41,9 +42,6 @@ if __name__ == "__main__":
     xlen = len(data)
     ylen = len(data[0])
     newdata = np.copy(data)
-
-    center_x = xlen / 2
-    center_y = ylen / 2
     
     for i in range(xlen):
         print "    column", str(i + 1), "of", xlen

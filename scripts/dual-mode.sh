@@ -1,51 +1,31 @@
 #!/bin/bash
 
-# uses SExtractor dual mode to perform multi-band photometry on modsub2 images
+# uses SExtractor dual mode to perform multi-band photometry
 
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -ge 3 ] || abort "usage: $0 <directory/containing/galaxy/directories> <catalog/output/dir> <galaxy_and_filter_1> [galaxy_and_filter_2] ..."
+[ $# -eq 1 ] || abort "usage: $0 <original_image.fits.dual>"
 
-directory="$(strip_trailing_slash "$1")"
-assert_directory_exists "$directory"
+grep -q '\.fits\.dual$' <<< "$1" || abort "not a .fits.dual file: $1"
 
-catalog_directory="$(strip_trailing_slash "$2")"
-assert_directory_exists "$catalog_directory"
+measure_dual="$1"
+detect_dual="$(sed -e 's/_[ugriz].fits.dual/_g.fits.dual/g' <<< "$1")"
+assert_exists "$detect_dual" "$measure_dual"
 
-shift 2
+detect_image="$(dirname "$detect_dual")/$(<"$detect_dual")"
+measure_image="$(dirname "$measure_dual")/$(<"$measure_dual")"
+assert_exists "$detect_image" "$measure_image"
 
-# identify object detection image
-for band in 'g' 'i' 'z' 'u' 'r'; do
-	detect="$(grep -o "VCC...._${band}" <<< "$@")" && break
-done
+detect_weight="$(sed -e 's/.fits.dual/_sig.fits/g' <<< "$detect_dual")"
+detect_flag="$(sed -e 's/.fits.dual/_flag.fits/g' <<< "$detect_dual")"
+assert_exists "$detect_weight" "$detect_flag"
 
-echo_debug "detecting with: $detect"
+measure_weight="$(sed -e 's/.fits.dual/_sig.fits/g' <<< "$measure_dual")"
+measure_flag="$(sed -e 's/.fits.dual/_flag.fits/g' <<< "$measure_dual")"
+assert_exists "$measure_weight" "$measure_flag"
 
-get_modsub2() {
-	echo "$directory"/"$(grep -o 'VCC....' <<< "$1")"/"$1_modsub2.fits"
-}
+catalog_file="$(dirname "$measure_image")/$(grep -o 'VCC...._[ugriz]' <<< "$measure_image").cat"
+remove_if_exists "$catalog_file"
 
-detect_image="$(get_modsub2 "$detect")"
-
-detect_weight="$(sed -e 's/\_modsub2.fits/_sig.fits/g' <<< "$detect_image")"
-detect_flag="$(sed -e 's/\_modsub2.fits/_flag.fits/g' <<< "$detect_image")"
-
-for measure in $@; do
-	measure_image="$(get_modsub2 "$measure")"
-
-	measure_weight="$(sed -e 's/\_modsub2.fits/_sig.fits/g' <<< "$measure_image")"
-	measure_flag="$(sed -e 's/\_modsub2.fits/_flag.fits/g' <<< "$measure_image")"
-
-	catalog_file="$catalog_directory/$measure.cat"
-
-	# if catalog already exists and newer than modsub2 images, skip
-	if [ -f "$catalog_file" ] && [ "$catalog_file" -nt "$detect_image" ] && [ "$catalog_file" -nt "$measure_image" ]; then
-		echo_debug "skipping, catalog up to date"
-		continue
-	fi
-
-	print_banner "processing $measure_image"
-
-	assert_successful sextractor "$detect_image","$measure_image" -c ngvs.sex -WEIGHT_IMAGE "$detect_weight","$measure_weight" -FLAG_IMAGE "$detect_flag","$measure_flag" -CATALOG_NAME "$catalog_file"
-done
+assert_successful sextractor "$detect_image","$measure_image" -c ngvs.sex -WEIGHT_IMAGE "$detect_weight","$measure_weight" -FLAG_IMAGE "$detect_flag","$measure_flag" -CATALOG_NAME "$catalog_file"

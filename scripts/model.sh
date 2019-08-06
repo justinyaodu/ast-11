@@ -24,19 +24,31 @@ remove_if_exists "$output_image"
 # get background light value from table
 background="$(./background.sh "$table_file")"
 
+# set appropriate timeout value
+galaxy="$(grep -o 'VCC....' <<< "$(basename "$table_file")")"
+case "$galaxy" in
+VCC0197)
+	timeout="2h"
+	;;
+*)
+	timeout="10m"
+	;;
+esac
+echo_debug "timeout: $timeout"
+
 # create model, running appropriate cl script
 if using_isofit; then
-	assert_successful run_and_log "$log_file" timeout 10m ./cmodel.cl "$table_file" "$output_image" "$background" "yes"
+	assert_successful run_and_log "$log_file" timeout "$timeout" ./cmodel.cl "$table_file" "$output_image" "$background" "yes"
 else
-	assert_successful run_and_log "$log_file" timeout 10m ./bmodel.cl "$table_file" "$output_image" "$background" "yes"
+	assert_successful run_and_log "$log_file" timeout "$timeout" ./bmodel.cl "$table_file" "$output_image" "$background" "yes"
 fi
 
 # if error encountered, try again but do not use higher harmonics
 if grep -q "ERROR" "$log_file"; then
 	if using_isofit; then
-		assert_successful run_and_log "$log_file" timeout 10m ./cmodel.cl "$table_file" "$output_image" "$background" "no"
+		assert_successful run_and_log "$log_file" timeout "$timeout" ./cmodel.cl "$table_file" "$output_image" "$background" "no"
 	else
-		assert_successful run_and_log "$log_file" timeout 10m ./bmodel.cl "$table_file" "$output_image" "$background" "no"
+		assert_successful run_and_log "$log_file" timeout "$timeout" ./bmodel.cl "$table_file" "$output_image" "$background" "no"
 	fi
 fi
 

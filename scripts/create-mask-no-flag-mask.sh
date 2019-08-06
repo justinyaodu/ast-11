@@ -16,7 +16,7 @@ model_table="$2"
 
 # assuming the input file ends with "_modsub1.fits"
 # this removes those 13 characters
-seg_image="${input_image::-13}_seg.fits"
+seg_image="${input_image::-13}_mask.fits"
 
 # removes those same characters, but ends with .fits.pl instead
 pixel_list="${input_image::-13}.fits.pl"

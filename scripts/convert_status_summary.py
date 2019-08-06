@@ -2,7 +2,7 @@ import sys
 import re
 import numpy as np
 
-file = open(sys.argv[1], "r")
+file = sys.stdin
 line_list = []
 for line in file:
     line_list.append(np.array(re.split("\s+", line)))

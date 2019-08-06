@@ -28,6 +28,8 @@ while :; do
 	case "$?" in
 		# fit.sh did not give any error codes; now check if table data is valid
 		0)
+			# NOTE good-fit.sh has been disabled
+			# and always returns 0
 			if ./good-fit.sh "$output_table"; then
 				echo_debug "output table looks good"
 				break

@@ -11,12 +11,10 @@ original_image="$1"
 
 assert_exists "$original_image"
 
-output_image="$(sed -e 's/\.fits$/_modsub4.fits/g' <<< "$original_image")"
+output_image="$(sed -e 's/\.fits$/_rmf.fits/g' <<< "$original_image")"
 if [ -f "$output_image" ] && [ "$output_image" -nt "$original_image" ]; then
 	debug_echo "final image $output_image up to date, skipping"
 	exit 0
 fi
 
-assert_successful python ring_median.py "$original_image"
-
-echo "4" > "$original_image.status"
+assert_successful python fits_dump.py "$original_image" | ./ring_median | python fits_undump.py "$output_image"

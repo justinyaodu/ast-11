@@ -90,7 +90,7 @@ def check_masking(mask_filename):
         print "isophote " + str(i) + ": ", count_masked, "of", count_in_ellipse, "pixels masked", "(" + "{0:.2f}".format(percent) + "%)"
         
         # determine if fraction of masked pixels is satisfactory
-        if percent <= 30:
+        if percent <= 50:
             count_good_isophotes += 1
 
     # determine if fraction of good isophotes is satisfactory

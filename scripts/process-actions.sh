@@ -5,12 +5,12 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 2 ] || abort "usage: $0 <directory/containing/galaxy/directories> <actions.csv>"
+[ $# -eq 2 ] || abort "usage: $0 <directory/containing/galaxy/directories> <inspection.csv>"
 
 containing_dir="$(strip_trailing_slash "$1")"
-actions="$2"
 
-assert_exists "$actions"
+inspection="$2"
+assert_exists "$inspection"
 
 process_action() {
 	galaxy_and_filter="$1"
@@ -26,7 +26,7 @@ process_action() {
 	fi
 
 	case "$action" in
-		ignore | copy)
+		ignore | ok | ref)
 			echo_debug "doing nothing"
 			;;
 		redo)
@@ -44,7 +44,7 @@ process_action() {
 	esac
 }
 
-sed -e 's/\r$//g' < "$actions" | while read -r line; do
-	line="$(sed -e 's/,/ /g' <<< "$line")"
+python process_inspection_spreadsheet.py < "$inspection" | while read -r line; do
+	print_banner "$line"
 	process_action $line
 done

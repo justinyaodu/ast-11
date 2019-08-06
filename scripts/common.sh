@@ -113,6 +113,26 @@ print_banner() {
 	>&2 echo
 }
 
+# returns the best model-subtracted image corresponding to the input original image
+get_best() {
+	echo foo
+	if ! [ -f "$1" ]; then return 1; fi
+	echo bar
+	local image="$(sed -e 's/\.fits$/_modsub4.fits/g' <<< "$1")"
+	if [ -f "$image" ]; then echo "$image"; return; fi
+	echo baz
+	local image="$(sed -e 's/\.fits$/_modsub3.fits/g' <<< "$1")"
+	if [ -f "$image" ]; then echo "$image"; return; fi
+	echo green
+	local image="$(sed -e 's/\.fits$/_modsub2.fits/g' <<< "$1")"
+	if [ -f "$image" ]; then echo "$image"; return; fi
+	echo eggs
+	local image="$(sed -e 's/\.fits$/_modsub1.fits/g' <<< "$1")"
+	if [ -f "$image" ]; then echo "$image"; return; fi
+	echo ham
+	return 1
+}
+
 # print error message if we suspect that the user has not activated the conda environment
 # do this by checking for the presence of the IRAF cl executable
 [ -n "$(type -P cl)" ] || abort "conda environment is not activated"

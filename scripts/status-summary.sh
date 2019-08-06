@@ -11,4 +11,4 @@ source common.sh
 
 for status in $(find "$1" | grep 'VCC...._[ugriz].fits.status$'); do
 	echo "$(grep -o 'VCC...._.' <<< "$status") $(cat "$status")"
-done > "$1/status-$(date +"%Y%m%d-%H%M")"
+done | python convert_status_summary.py # > "$1/status-$(date +"%Y%m%d-%H%M")"
