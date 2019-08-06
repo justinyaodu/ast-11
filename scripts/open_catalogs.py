@@ -1,11 +1,13 @@
 #code to open the catalogs from sextractor and catalog fits file and then put them into 
 #arrays as seperate objects with the sorted out variables
 
+from __future__ import division
 import astropy
 from astropy.io import fits
 import sys
 import numpy as np
 import math
+
 
 class SextractorObj:
 	def __init__(self,ra,dec,magnitude):
@@ -22,19 +24,21 @@ class FitsObj:
 	def __str__(self):
 		return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)
 class Match:
-	def __init__(self,sex_object,fits_object):
+	def __init__(self,sex_object,fits_object,distance):
 		self.sex_object=sex_object
 		self.fits_object=fits_object
+		self.distance=distance
 	def __str__(self):
-		return "MATCHED OBJECT = FITS ra: "+str(fits_object.ra)+ "   dec: " + str(fits_object.dec)+"   magnitude: " +str(fits_object.mag)+"\n"+ "SEXTRACTOR ra: "+str(sex_object.ra)+ "   dec: " + str(sex_object.dec)+"   magnitude: " +str(sex_object.mag)		
+		return "MATCHED OBJECT = "+ str(self.distance) +"\n" + "FITS ra: "+str(self.fits_object.ra)+ "   dec: " + str(self.fits_object.dec)+"   magnitude: " +str(self.fits_object.mag)+"\n"+ "SEXTRACTOR ra: "+str(self.sex_object.ra)+ "   dec: " + str(self.sex_object.dec)+"   magnitude: " +str(self.sex_object.magnitude)		
 		
 	
 	
 	
 #finding the distance between the sextractor and fits catalog to find the perfect match
 def distance (s_ra,f_ra,s_dec,f_dec):
-	rad_f_ra=f_ra*(math.pi/180)
-	length=math.sqrt((s_ra-f_ra)cos(rad_f_ra))**2+(s_dec-f_dec)**2)	
+	rad_f_dec=f_dec*(math.pi/180)
+	length=math.sqrt(((s_ra-f_ra)*(math.cos(rad_f_dec)))**2+(s_dec-f_dec)**2)
+	return length	
 	
 def open_catalog(catalog_file_name,sextractor_catalog):
 	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc=([] for i in range(15))
@@ -81,10 +85,11 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 	match_obj=[]
 	for f in fits_obj:
 		for s in sex_obj:
-			if(distance(s.ra,f.ra,s.dec,f.dec)<=(1/3600)):
-				match_obj.append(Match(s,f))
+			current_distance=distance(s.ra,f.ra,s.dec,f.dec)
+			if(current_distance<=(1/3600)):
+				match_obj.append(Match(s,f,current_distance))
 	for objects in match_obj:
-		print(str(objects))
+		print("\n"+str(objects))
 		
 	
 
