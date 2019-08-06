@@ -5,6 +5,7 @@ import astropy
 from astropy.io import fits
 import sys
 import numpy as np
+import math
 
 class SextractorObj:
 	def __init__(self,ra,dec,magnitude):
@@ -20,6 +21,20 @@ class FitsObj:
 		self.mag=mag
 	def __str__(self):
 		return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)
+class Match:
+	def __init__(self,sex_object,fits_object):
+		self.sex_object=sex_object
+		self.fits_object=fits_object
+	def __str__(self):
+		return "MATCHED OBJECT = FITS ra: "+str(fits_object.ra)+ "   dec: " + str(fits_object.dec)+"   magnitude: " +str(fits_object.mag)+"\n"+ "SEXTRACTOR ra: "+str(sex_object.ra)+ "   dec: " + str(sex_object.dec)+"   magnitude: " +str(sex_object.mag)		
+		
+	
+	
+	
+#finding the distance between the sextractor and fits catalog to find the perfect match
+def distance (s_ra,f_ra,s_dec,f_dec):
+	rad_f_ra=f_ra*(math.pi/180)
+	length=math.sqrt((s_ra-f_ra)cos(rad_f_ra))**2+(s_dec-f_dec)**2)	
 	
 def open_catalog(catalog_file_name,sextractor_catalog):
 	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc=([] for i in range(15))
@@ -62,7 +77,15 @@ def open_catalog(catalog_file_name,sextractor_catalog):
 	for sex_index in range(len(s_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
 		sex_obj.append(SextractorObj(s_alpha[sex_index],s_delta[sex_index],s_mag_aper[sex_index]))
-	for c in fits_obj:
-		print(str(c))
-	for d in sex_obj:
-		print(str(d))		       
+	
+	match_obj=[]
+	for f in fits_obj:
+		for s in sex_obj:
+			if(distance(s.ra,f.ra,s.dec,f.dec)<=(1/3600)):
+				match_obj.append(Match(s,f))
+	for objects in match_obj:
+		print(str(objects))
+		
+	
+
+	
