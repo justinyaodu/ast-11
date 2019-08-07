@@ -7,22 +7,28 @@ from astropy.io import fits
 import sys
 import numpy as np
 import math
-
+from sklearn.linear_model import LinearRegression
 
 class SextractorObj:
-	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,four_px,eight_px):
+	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,g_four,g_eight,u_four,u_eight,i_four,i_eight,z_four,z_eight):
 		self.ra=ra
 		self.dec=dec
 		self.g_mag=g_mag
 		self.u_mag=u_mag
 		self.i_mag=i_mag
 		self.z_mag=z_mag
-		self.four_px=four_px
-		self.eight_px=eight_px
+		self.g_four=g_four
+		self.g_eight=g_eight
+		self.u_four=u_four
+		self.u_eight=u_eight
+		self.i_four=i_four
+		self.i_eight=i_eight
+		self.z_four=z_four
+		self.z_eight=z_eight
 	def __str__(self):
 		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)
 class CorrectedSextractorObj:	
-	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,four_px,eight_px,correct_four,correct_eight):
+	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,four_px,eight_px,g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight):
 		self.ra=ra
 		self.dec=dec
 		self.g_mag=g_mag
@@ -31,8 +37,14 @@ class CorrectedSextractorObj:
 		self.z_mag=z_mag
 		self.four_px=four_px
 		self.eight_px=eight_px
-		self.correct_four=correct_four
-		self.correct_eight=correct_eight
+		self.g_corr_four=g_corr_four
+		self.g_corr_eight=g_corr_eight
+		self.u_corr_four=u_corr_four
+		self.u_corr_eight=u_corr_eight
+		self.i_corr_four=i_corr_four
+		self.i_corr_eight=i_corr_eight
+		self.z_corr_four=z_corr_four
+		self.z_corr_eight=z_corr_eight
 	def __str__(self):
 		return "Corrected SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)+"   four pixel: "+str(self.four_px)+"   eight pixel: "+str(self.eight_px)+"   corrected four pixel: "+str(self.correct_four)+"   corrected eight pixel: "+str(self.correct_eight)
 class FitsObj:
@@ -80,10 +92,10 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 	u_sextractor_catalog=g_sextractor_catalog[0:8]+"u.cat"
 	i_sextractor_catalog=g_sextractor_catalog[0:8]+"i.cat"
 	z_sextractor_catalog=g_sextractor_catalog[0:8]+"z.cat"
-	g_nmb,g_x_image,g_y_image,g_alpha,g_delta,g_a_world,g_erra_world,g_b_world,g_errb_world,g_theta_pa,g_errtheta_pa,g_elongation,g_ellip,g_mag_auto,g_magerr_auto,g_mag_best,g_magerr_best,g_mag_iso,g_magerr_iso,g_mag_isocor,g_magerr_isocor,g_mag_petro,g_magerr_petro,g_mag_aper,u_25,u_26,u_27,u_28,u_29,u_30,u_31,g_magerr_aper,u_33,u_34,u_35,u_36,u_37,u_38,u_39,g_flux_rad,g_kron_rad,g_petro_rad,g_mu_max,g_background,g_isoarea_image,g_fwhm_image,g_flags,g_class_star=np.loadtxt(g_sextractor_catalog,unpack=True)
-	u_nmb,u_x_image,u_y_image,u_alpha,u_delta,u_a_world,u_erra_world,u_b_world,u_errb_world,u_theta_pa,u_errtheta_pa,u_elongation,u_ellip,u_mag_auto,u_magerr_auto,u_mag_best,u_magerr_best,u_mag_iso,u_magerr_iso,u_mag_isocor,u_magerr_isocor,u_mag_petro,u_magerr_petro,u_mag_aper,u1_25,u1_26,u1_27,u1_28,u1_29,u1_30,u1_31,u_magerr_aper,u1_33,u1_34,u1_35,u1_36,u1_37,u1_38,u1_39,u_flux_rad,u_kron_rad,u_petro_rad,u_mu_max,u_background,u_isoarea_image,u_fwhm_image,u_flags,u_class_star=np.loadtxt(u_sextractor_catalog,unpack=True)
-	i_nmb,i_x_image,i_y_image,i_alpha,i_delta,i_a_world,i_erra_world,i_b_world,i_errb_world,i_theta_pa,i_errtheta_pa,i_elongation,i_ellip,i_mag_auto,i_magerr_auto,i_mag_best,i_magerr_best,i_mag_iso,i_magerr_iso,i_mag_isocor,i_magerr_isocor,i_mag_petro,i_magerr_petro,i_mag_aper,u2_25,u2_26,u2_27,u2_28,u2_29,u2_30,u2_31,i_magerr_aper,u2_33,u2_34,u2_35,u2_36,u2_37,u2_38,u2_39,i_flux_rad,i_kron_rad,i_petro_rad,i_mu_max,i_background,i_isoarea_image,i_fwhm_image,i_flags,i_class_star=np.loadtxt(i_sextractor_catalog,unpack=True)
-	z_nmb,z_x_image,z_y_image,z_alpha,z_delta,z_a_world,z_erra_world,z_b_world,z_errb_world,z_theta_pa,z_errtheta_pa,z_elongation,z_ellip,z_mag_auto,z_magerr_auto,z_mag_best,z_magerr_best,z_mag_iso,z_magerr_iso,z_mag_isocor,z_magerr_isocor,z_mag_petro,z_magerr_petro,z_mag_aper,u3_25,u3_26,u3_27,u3_28,u3_29,u3_30,u3_31,z_magerr_aper,u3_33,u3_34,u3_35,u3_36,u3_37,u3_38,u3_39,z_flux_rad,z_kron_rad,z_petro_rad,z_mu_max,z_background,z_isoarea_image,z_fwhm_image,z_flags,z_class_star=np.loadtxt(z_sextractor_catalog,unpack=True)
+	g_nmb,g_x_image,g_y_image,g_alpha,g_delta,g_a_world,g_erra_world,g_b_world,g_errb_world,g_theta_pa,g_errtheta_pa,g_elongation,g_ellip,g_mag_auto,g_magerr_auto,g_mag_best,g_magerr_best,g_mag_iso,g_magerr_iso,g_mag_isocor,g_magerr_isocor,g_mag_petro,g_magerr_petro,g_mag_aper,g_four,u_26,u_27,u_28,g_eight,u_30,u_31,g_magerr_aper,u_33,u_34,u_35,u_36,u_37,u_38,u_39,g_flux_rad,g_kron_rad,g_petro_rad,g_mu_max,g_background,g_isoarea_image,g_fwhm_image,g_flags,g_class_star=np.loadtxt(g_sextractor_catalog,unpack=True)
+	u_nmb,u_x_image,u_y_image,u_alpha,u_delta,u_a_world,u_erra_world,u_b_world,u_errb_world,u_theta_pa,u_errtheta_pa,u_elongation,u_ellip,u_mag_auto,u_magerr_auto,u_mag_best,u_magerr_best,u_mag_iso,u_magerr_iso,u_mag_isocor,u_magerr_isocor,u_mag_petro,u_magerr_petro,u_mag_aper,u_four,u1_26,u1_27,u1_28,u_eight,u1_30,u1_31,u_magerr_aper,u1_33,u1_34,u1_35,u1_36,u1_37,u1_38,u1_39,u_flux_rad,u_kron_rad,u_petro_rad,u_mu_max,u_background,u_isoarea_image,u_fwhm_image,u_flags,u_class_star=np.loadtxt(u_sextractor_catalog,unpack=True)
+	i_nmb,i_x_image,i_y_image,i_alpha,i_delta,i_a_world,i_erra_world,i_b_world,i_errb_world,i_theta_pa,i_errtheta_pa,i_elongation,i_ellip,i_mag_auto,i_magerr_auto,i_mag_best,i_magerr_best,i_mag_iso,i_magerr_iso,i_mag_isocor,i_magerr_isocor,i_mag_petro,i_magerr_petro,i_mag_aper,i_four,u2_26,u2_27,u2_28,i_eight,u2_30,u2_31,i_magerr_aper,u2_33,u2_34,u2_35,u2_36,u2_37,u2_38,u2_39,i_flux_rad,i_kron_rad,i_petro_rad,i_mu_max,i_background,i_isoarea_image,i_fwhm_image,i_flags,i_class_star=np.loadtxt(i_sextractor_catalog,unpack=True)
+	z_nmb,z_x_image,z_y_image,z_alpha,z_delta,z_a_world,z_erra_world,z_b_world,z_errb_world,z_theta_pa,z_errtheta_pa,z_elongation,z_ellip,z_mag_auto,z_magerr_auto,z_mag_best,z_magerr_best,z_mag_iso,z_magerr_iso,z_mag_isocor,z_magerr_isocor,z_mag_petro,z_magerr_petro,z_mag_aper,z_four,u3_26,u3_27,u3_28,z_eight,u3_30,u3_31,z_magerr_aper,u3_33,u3_34,u3_35,u3_36,u3_37,u3_38,u3_39,z_flux_rad,z_kron_rad,z_petro_rad,z_mu_max,z_background,z_isoarea_image,z_fwhm_image,z_flags,z_class_star=np.loadtxt(z_sextractor_catalog,unpack=True)
 	
 	#making the objects
 	band_name=g_sextractor_catalog[8]
@@ -108,7 +120,7 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 				
 	for sex_index in range(len(g_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
-		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index],u_25[sex_index],u_29[sex_index]))
+		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index],g_four[sex_index],g_eight[sex_index],u_four[sex_index],u_eight[sex_index],i_four[sex_index],i_eight[sex_index],z_four[sex_index],z_eight[sex_index]))
 	
 	#finding the matched objects between the sextractor catalog and the fits catalog
 	match_obj=[]
@@ -123,20 +135,34 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 	for obj in match_obj:
 		if obj.fits_object.corr_index<0.1:
 			point_source.append(obj)
-	aper_cor_mag=[]
-	
-	#just setting the four pixel mag aper and eight pixel mag aper and the aper cor mag		     
-	
-	four_pix=[]
-	eight_pix=[]
+	aper_cor_gmag=[]
+	aper_cor_umag=[]
+	aper_cor_imag=[]
+	aper_cor_zmag=[]
 	for obj in point_source:
 		four_pix.append(obj.sex_object.four_px)
 		eight_pix.append(obj.sex_object.eight_px)
-		aper_cor_mag.append(obj.fits_object.gmag)
-	for obj in sex_obj:
+		aper_cor_gmag.append(obj.fits_object.gmag)
+		aper_cor_umag.append(obj.fits_object.umag)
+		aper_cor_imag.append(obj.fits_object.imag)
+		aper_cor_zmag.append(obj.fits_object.zmag)
+		
+	x = four_pix.reshape((-1, 1))
+	y = aper_cor_umag
+	model = LinearRegression().fit(x, y)
+	print('intercept:', model.intercept_)
+	print('slope:', model.coef_)
+		
+	'''for obj in sex_obj:
 		index=0
-		corrected_four=(0.836*obj.four_px)+4.13
-		corrected_eight=(0.838*obj.eight_px)+4.43
-		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],u_25[index],u_29[index],corrected_four,corrected_eight)
+		g_corr_four=(0.836*obj.four_px)+4.13
+		g_corr_eight=(0.838*obj.eight_px)+4.43
+		u_corr_four=
+		u_corr_eight=
+		i_corr_four=
+		i_corr_eight=
+		z_corr_four=
+		z_corr_eight=
+		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],u_25[index],u_29[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight)
 		print(obj)
-		index=index+1
+		index=index+1'''
