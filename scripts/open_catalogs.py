@@ -21,6 +21,20 @@ class SextractorObj:
 		self.eight_px=eight_px
 	def __str__(self):
 		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)
+class CorrectedSextractorObj:	
+	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,four_px,eight_px,correct_four,correct_eight):
+		self.ra=ra
+		self.dec=dec
+		self.g_mag=g_mag
+		self.u_mag=u_mag
+		self.i_mag=i_mag
+		self.z_mag=z_mag
+		self.four_px=four_px
+		self.eight_px=eight_px
+		self.correct_four=correct_four
+		self.correct_eight=correct_eight
+	def __str__(self):
+		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)+"   four pixel: "+str(self.four_px)+"   eight pixel: "+str(self.eight_px)+"   corrected four pixel: "+str(self.correct_four)+"   corrected eight pixel: "+str(self.correct_eight)
 class FitsObj:
 	def __init__(self,ra,dec,mag,corr_index,gmag):
 		self.ra=ra
@@ -45,7 +59,7 @@ class Match:
 def distance (s_ra,f_ra,s_dec,f_dec):
 	rad_f_dec=f_dec*(math.pi/180)
 	length=math.sqrt(((s_ra-f_ra)*(math.cos(rad_f_dec)))**2+(s_dec-f_dec)**2)
-	return length	
+	return length
 	
 #sextractor_catalog always has to be in the g band	
 def open_catalog(catalog_file_name,g_sextractor_catalog):
@@ -119,6 +133,11 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		four_pix.append(obj.sex_object.four_px)
 		eight_pix.append(obj.sex_object.eight_px)
 		aper_cor_mag.append(obj.fits_object.gmag)
-	for num in range(len(four_pix)):
-		print("\n"+"four_pix: " + str(four_pix[num]) + "\n"+"eight_pix: " + str(eight_pix[num])+"\n"+"aper cor mag: " + str(aper_cor_mag[num]))	
-
+	for obj in sex_obj:
+		index=0
+		corrected_four=(0.836*obj.u_25)+4.13
+		corrected_eight=(0.838*obj.u_29)+4.43
+		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],u_25[index],u_29[index],corrected_four,corrected_eight)
+		index=index+1
+	for obj in sex_obj:
+		print(obj)
