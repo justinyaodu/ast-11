@@ -193,14 +193,14 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 	#found these slope and intercept values from the code commented above	
 	for obj in sex_obj:
 		index=0
-		g_corr_four=(0.8356859*obj.four_px)+4.126092533190409
-		g_corr_eight=(0.83805141*obj.eight_px)+4.4296660274459505
-		u_corr_four=(1.22978512*obj.eight_px)-6.6390897878619235
-		u_corr_eight=(1.22608518*obj.eight_px)-5.605123805346295
-		i_corr_four=( 0.99802054*obj.eight_px)-0.5124901699508975
-		i_corr_eight=(0.99959828*obj.eight_px)-0.12177102767153514
-		z_corr_four=(0.98753496*obj.eight_px)-1.1294699641616717
-		z_corr_eight=(0.9920881*obj.eight_px)-0.32163449904708585
+		g_corr_four=(0.8356859*obj.g_four)+4.126092533190409
+		g_corr_eight=(0.83805141*obj.g_eight)+4.4296660274459505
+		u_corr_four=(1.22978512*obj.u_four)-6.6390897878619235
+		u_corr_eight=(1.22608518*obj.u_eight)-5.605123805346295
+		i_corr_four=( 0.99802054*obj.i_four)-0.5124901699508975
+		i_corr_eight=(0.99959828*obj.i_eight)-0.12177102767153514
+		z_corr_four=(0.98753496*obj.z_four)-1.1294699641616717
+		z_corr_eight=(0.9920881*obj.z_eight)-0.32163449904708585
 		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight)
 		print(obj)
 		index=index+1
