@@ -34,7 +34,7 @@ class CorrectedSextractorObj:
 		self.correct_four=correct_four
 		self.correct_eight=correct_eight
 	def __str__(self):
-		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)+"   four pixel: "+str(self.four_px)+"   eight pixel: "+str(self.eight_px)+"   corrected four pixel: "+str(self.correct_four)+"   corrected eight pixel: "+str(self.correct_eight)
+		return "Corrected SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)+"   four pixel: "+str(self.four_px)+"   eight pixel: "+str(self.eight_px)+"   corrected four pixel: "+str(self.correct_four)+"   corrected eight pixel: "+str(self.correct_eight)
 class FitsObj:
 	def __init__(self,ra,dec,mag,corr_index,gmag):
 		self.ra=ra
@@ -135,9 +135,8 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		aper_cor_mag.append(obj.fits_object.gmag)
 	for obj in sex_obj:
 		index=0
-		corrected_four=(0.836*obj.u_25)+4.13
-		corrected_eight=(0.838*obj.u_29)+4.43
+		corrected_four=(0.836*obj.four_px)+4.13
+		corrected_eight=(0.838*obj.eight_px)+4.43
 		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],u_25[index],u_29[index],corrected_four,corrected_eight)
-		index=index+1
-	for obj in sex_obj:
 		print(obj)
+		index=index+1
