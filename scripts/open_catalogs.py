@@ -28,15 +28,13 @@ class SextractorObj:
 	def __str__(self):
 		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)
 class CorrectedSextractorObj:	
-	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,four_px,eight_px,g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight):
+	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight):
 		self.ra=ra
 		self.dec=dec
 		self.g_mag=g_mag
 		self.u_mag=u_mag
 		self.i_mag=i_mag
 		self.z_mag=z_mag
-		self.four_px=four_px
-		self.eight_px=eight_px
 		self.g_corr_four=g_corr_four
 		self.g_corr_eight=g_corr_eight
 		self.u_corr_four=u_corr_four
@@ -48,12 +46,16 @@ class CorrectedSextractorObj:
 	def __str__(self):
 		return "Corrected SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)+"   four pixel: "+str(self.four_px)+"   eight pixel: "+str(self.eight_px)+"   corrected four pixel: "+str(self.correct_four)+"   corrected eight pixel: "+str(self.correct_eight)
 class FitsObj:
-	def __init__(self,ra,dec,mag,corr_index,gmag):
+	def __init__(self,ra,dec,mag,corr_index,gmag,umag,imag,zmag):
 		self.ra=ra
 		self.dec=dec
 		self.mag=mag
 		self.corr_index=corr_index
 		self.gmag=gmag
+		self.umag=umag
+		self.imag=imag
+		self.zmag=zmag
+
 	def __str__(self):
 		return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)+"   IC: " +str(self.corr_index)
 class Match:
@@ -116,7 +118,7 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		test_mags=zmag
 		
 	for fits_index in range(len(x_sex)):
-		fits_obj.append(FitsObj(ra[fits_index],dec[fits_index],test_mags[fits_index],ic[fits_index],gmag[fits_index]))
+		fits_obj.append(FitsObj(ra[fits_index],dec[fits_index],test_mags[fits_index],ic[fits_index],gmag[fits_index],umag[fits_index],imag[fits_index],zmag[fits_index]))
 				
 	for sex_index in range(len(g_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
@@ -135,23 +137,56 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 	for obj in match_obj:
 		if obj.fits_object.corr_index<0.1:
 			point_source.append(obj)
+	gfour=[]
+	geight=[]
+	ufour=[]
+	ueight=[]
+	ifour=[]
+	ieight=[]
+	zfour=[]
+	zeight=[]
 	aper_cor_gmag=[]
 	aper_cor_umag=[]
 	aper_cor_imag=[]
 	aper_cor_zmag=[]
 	for obj in point_source:
-		four_pix.append(obj.sex_object.four_px)
-		eight_pix.append(obj.sex_object.eight_px)
+		gfour.append(obj.sex_object.g_four)
+		geight.append(obj.sex_object.g_eight)
+		ufour.append(obj.sex_object.u_four)
+		ueight.append(obj.sex_object.u_eight)
+		ifour.append(obj.sex_object.i_four)
+		ieight.append(obj.sex_object.i_eight)
+		zfour.append(obj.sex_object.z_four)
+		zeight.append(obj.sex_object.z_eight)
 		aper_cor_gmag.append(obj.fits_object.gmag)
 		aper_cor_umag.append(obj.fits_object.umag)
 		aper_cor_imag.append(obj.fits_object.imag)
 		aper_cor_zmag.append(obj.fits_object.zmag)
-		
-	x = four_pix.reshape((-1, 1))
-	y = aper_cor_umag
-	model = LinearRegression().fit(x, y)
-	print('intercept:', model.intercept_)
-	print('slope:', model.coef_)
+	four_pixel_mag_arrays=dict()
+	four_pixel_mag_arrays["u"]=ufour
+	four_pixel_mag_arrays["g"]=gfour
+	four_pixel_mag_arrays["i"]=ifour 
+	four_pixel_mag_arrays["z"]=zfour
+	eight_pixel_mag_arrays=dict()
+	eight_pixel_mag_arrays["u"]=ueight
+	eight_pixel_mag_arrays["g"]=geight
+	eight_pixel_mag_arrays["i"]=ieight 
+	eight_pixel_mag_arrays["z"]=zeight 
+	aper_cor_mag_arrays=dict()
+	aper_cor_mag_arrays["u"]=aper_cor_umag 
+	aper_cor_mag_arrays["g"]=aper_cor_gmag
+	aper_cor_mag_arrays["i"]=aper_cor_imag 
+	aper_cor_mag_arrays["z"]=aper_cor_zmag 
+	for band in "u""g""i""z":
+		#my_four=four_pixel_mag_arrays[band]
+		my_eight=eight_pixel_mag_arrays[band]
+		my_aper=aper_cor_mag_arrays[band]
+		x = np.array(my_eight).reshape(-1,1)
+		y = my_aper
+		model = LinearRegression().fit(x, y)
+		print(band)
+		print("intercept: " + str(model.intercept_))
+		print("slope: " + str(model.coef_))
 		
 	'''for obj in sex_obj:
 		index=0
