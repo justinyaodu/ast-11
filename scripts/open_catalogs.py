@@ -44,7 +44,7 @@ class CorrectedSextractorObj:
 		self.z_corr_four=z_corr_four
 		self.z_corr_eight=z_corr_eight
 	def __str__(self):
-		return "Corrected SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)+"   four pixel: "+str(self.four_px)+"   eight pixel: "+str(self.eight_px)+"   corrected four pixel: "+str(self.correct_four)+"   corrected eight pixel: "+str(self.correct_eight)
+		return "Corrected SEXTRACTOR:" + "\n" + "g_corr_4: "+str(self.g_corr_four)+ "\n" + "g_corr_eight: " + str(self.g_corr_eight)+ "\n" +"u_corr_four: "+str(self.u_corr_four)+ "\n" + "u_corr_eight: "+str(self.u_corr_eight)+ "\n" +"i_corr_four: "+str(self.i_corr_four)+ "\n" +"i_corr_eight: "+str(self.i_corr_eight)+ "\n" +"z_corr_four: "+str(self.z_corr_four)+ "\n" +"z_corr_eight: "+str(self.z_corr_eight)
 class FitsObj:
 	def __init__(self,ra,dec,mag,corr_index,gmag,umag,imag,zmag):
 		self.ra=ra
@@ -137,7 +137,9 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 	for obj in match_obj:
 		if obj.fits_object.corr_index<0.1:
 			point_source.append(obj)
-	gfour=[]
+			
+	#to find linear regression: use commented-out code below		
+	'''gfour=[]
 	geight=[]
 	ufour=[]
 	ueight=[]
@@ -186,18 +188,19 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		model = LinearRegression().fit(x, y)
 		print(band)
 		print("intercept: " + str(model.intercept_))
-		print("slope: " + str(model.coef_))
+		print("slope: " + str(model.coef_))'''
 		
-	'''for obj in sex_obj:
+	#found these slope and intercept values from the code commented above	
+	for obj in sex_obj:
 		index=0
-		g_corr_four=(0.836*obj.four_px)+4.13
-		g_corr_eight=(0.838*obj.eight_px)+4.43
-		u_corr_four=
-		u_corr_eight=
-		i_corr_four=
-		i_corr_eight=
-		z_corr_four=
-		z_corr_eight=
-		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],u_25[index],u_29[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight)
+		g_corr_four=(0.8356859*obj.four_px)+4.126092533190409
+		g_corr_eight=(0.83805141*obj.eight_px)+4.4296660274459505
+		u_corr_four=(1.22978512*obj.eight_px)-6.6390897878619235
+		u_corr_eight=(1.22608518*obj.eight_px)-5.605123805346295
+		i_corr_four=( 0.99802054*obj.eight_px)-0.5124901699508975
+		i_corr_eight=(0.99959828*obj.eight_px)-0.12177102767153514
+		z_corr_four=(0.98753496*obj.eight_px)-1.1294699641616717
+		z_corr_eight=(0.9920881*obj.eight_px)-0.32163449904708585
+		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight)
 		print(obj)
-		index=index+1'''
+		index=index+1
