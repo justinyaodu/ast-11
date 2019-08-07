@@ -22,7 +22,7 @@ class SextractorObj:
 	def __str__(self):
 		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)
 class FitsObj:
-	def __init__(self,ra,dec,mag,ic,gmag):
+	def __init__(self,ra,dec,mag,corr_index,gmag):
 		self.ra=ra
 		self.dec=dec
 		self.mag=mag
@@ -94,7 +94,7 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 				
 	for sex_index in range(len(g_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
-		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index],u25[sex_index],u29[sex_index]))
+		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index],u_25[sex_index],u_29[sex_index]))
 	
 	#finding the matched objects between the sextractor catalog and the fits catalog
 	match_obj=[]
@@ -110,18 +110,15 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		if obj.fits_object.corr_index<0.1:
 			point_source.append(obj)
 	aper_cor_mag=[]
-	for objects in point_source:
-		aper_cor_mag.append(objects.fits_object.gmag)
 	
-	#just setting the four pixel mag aper and eight pixel mag aper		     
+	#just setting the four pixel mag aper and eight pixel mag aper and the aper cor mag		     
 	
 	four_pix=[]
 	eight_pix=[]
 	for obj in point_source:
 		four_pix.append(obj.sex_object.four_px)
 		eight_pix.append(obj.sex_object.eight_px)
-	
+		aper_cor_mag.append(obj.fits_object.gmag)
 	for num in range(len(four_pix)):
-		print("\n"+"four_pix: " + four_pix[num] + "      eight_pix: " + eight_pix[num])	
-	for ind in range(len(aper_cor_mag)):
-		print("\n"+"aperture corrected magnitude: " + aper_cor_mag[ind])
+		print("\n"+"four_pix: " + str(four_pix[num]) + "\n"+"eight_pix: " + str(eight_pix[num])+"\n"+"aper cor mag: " + str(aper_cor_mag[num]))	
+
