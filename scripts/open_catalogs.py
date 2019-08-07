@@ -10,22 +10,26 @@ import math
 
 
 class SextractorObj:
-	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag):
+	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,four_px,eight_px):
 		self.ra=ra
 		self.dec=dec
 		self.g_mag=g_mag
 		self.u_mag=u_mag
 		self.i_mag=i_mag
 		self.z_mag=z_mag
+		self.four_px=four_px
+		self.eight_px=eight_px
 	def __str__(self):
 		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)
 class FitsObj:
-	def __init__(self,ra,dec,mag):
+	def __init__(self,ra,dec,mag,ic,gmag):
 		self.ra=ra
 		self.dec=dec
 		self.mag=mag
+		self.corr_index=corr_index
+		self.gmag=gmag
 	def __str__(self):
-		return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)
+		return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)+"   IC: " +str(self.corr_index)
 class Match:
 	def __init__(self,sex_object,fits_object,distance):
 		self.sex_object=sex_object
@@ -45,11 +49,11 @@ def distance (s_ra,f_ra,s_dec,f_dec):
 	
 #sextractor_catalog always has to be in the g band	
 def open_catalog(catalog_file_name,g_sextractor_catalog):
-	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc=([] for i in range(15))
-	arr=[x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,p_gc]
+	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,ic,p_gc=([] for i in range(16))
+	arr=[x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,ic,p_gc]
 	hdul=fits.open(catalog_file_name)
 	data=hdul[1].data
-	arr_indexes=[0,1,2,3,5,6,7,8,9,11,12,13,14,15,28]
+	arr_indexes=[0,1,2,3,5,6,7,8,9,11,12,13,14,15,17,28]
 	index=0
 	for x in range(len(data)):
 		sep_data=data[x]
@@ -86,23 +90,38 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		test_mags=zmag
 		
 	for fits_index in range(len(x_sex)):
-		fits_obj.append(FitsObj(ra[fits_index],dec[fits_index],test_mags[fits_index]))
+		fits_obj.append(FitsObj(ra[fits_index],dec[fits_index],test_mags[fits_index],ic[fits_index],gmag[fits_index]))
 				
 	for sex_index in range(len(g_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
-		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index]))
+		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index],u25[sex_index],u29[sex_index]))
 	
-	'''for sex_objects in sex_obj:
-		print(sex_objects)'''
+	#finding the matched objects between the sextractor catalog and the fits catalog
 	match_obj=[]
 	for f in fits_obj:
 		for s in sex_obj:
 			current_distance=distance(s.ra,f.ra,s.dec,f.dec)
 			if(current_distance<=(1/3600)):
 				match_obj.append(Match(s,f,current_distance))
-	for objects in match_obj:
-		print("\n"+str(objects))
-		
 	
-
+	#finding point sources from the matched fits object
+	point_source=[]
+	for obj in match_obj:
+		if obj.fits_object.corr_index<0.1:
+			point_source.append(obj)
+	aper_cor_mag=[]
+	for objects in point_source:
+		aper_cor_mag.append(objects.fits_object.gmag)
 	
+	#just setting the four pixel mag aper and eight pixel mag aper		     
+	
+	four_pix=[]
+	eight_pix=[]
+	for obj in point_source:
+		four_pix.append(obj.sex_object.four_px)
+		eight_pix.append(obj.sex_object.eight_px)
+	
+	for num in range(len(four_pix)):
+		print("\n"+"four_pix: " + four_pix[num] + "      eight_pix: " + eight_pix[num])	
+	for ind in range(len(aper_cor_mag)):
+		print("\n"+"aperture corrected magnitude: " + aper_cor_mag[ind])
