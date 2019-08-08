@@ -31,7 +31,7 @@ class SextractorObj:
 	def __str__(self):
 		return "SEXTRACTOR = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   g-magnitude: "+str(self.g_mag)+"   u-magnitude: "+str(self.u_mag)+"   i-magnitude: "+str(self.i_mag)+"   z-magnitude: "+str(self.z_mag)
 class CorrectedSextractorObj:	
-	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight):
+	def __init__(self,ra,dec,g_mag,u_mag,i_mag,z_mag,g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight,inRange):
 		self.ra=ra
 		self.dec=dec
 		self.g_mag=g_mag
@@ -46,6 +46,7 @@ class CorrectedSextractorObj:
 		self.i_corr_eight=i_corr_eight
 		self.z_corr_four=z_corr_four
 		self.z_corr_eight=z_corr_eight
+		self.inRange=inRange
 	def __str__(self):
 		return "Corrected SEXTRACTOR:" + "\n" + "g_corr_4: "+str(self.g_corr_four)+ "\n" + "g_corr_eight: " + str(self.g_corr_eight)+ "\n" +"u_corr_four: "+str(self.u_corr_four)+ "\n" + "u_corr_eight: "+str(self.u_corr_eight)+ "\n" +"i_corr_four: "+str(self.i_corr_four)+ "\n" +"i_corr_eight: "+str(self.i_corr_eight)+ "\n" +"z_corr_four: "+str(self.z_corr_four)+ "\n" +"z_corr_eight: "+str(self.z_corr_eight)
 class FitsObj:
@@ -205,7 +206,20 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		i_corr_eight=(0.99959828*obj.i_eight)-0.12177102767153514
 		z_corr_four=(0.98753496*obj.z_four)-1.1294699641616717
 		z_corr_eight=(0.9920881*obj.z_eight)-0.32163449904708585
-		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight)
-		print(obj)
+		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight,False)
 		index=index+1
-	#finding the concentration index (IC) using iband and seeing if it is in between a threshold of [-0.1,0.15]	
+		
+	#finding the concentration index (IC) using iband and also checking the color restrictions
+	counter=0
+	for obj in sex_obj:
+		difference=obj.i_corr_four-obj.i_corr_eight
+		if difference>=-0.1 && difference<=0.15:
+			#just use four pixel numbers for now but make sure to check what youkyung says
+			x_coord=u_corr_four-g_corr_four
+			y_coord=g_corr_four-i_corr_four
+			if (x_coord>0.8 && x_coord<1.9) && (y_coord<1.7 && y_coord>1):
+				if y_coord<(0.56*x_coord)+0.85 && y_coord>(0.6*x_coord)+0.35:
+					obj.inRange=True
+					counter=counter+1
+	print(len(sex_obj))
+	print(counter)
