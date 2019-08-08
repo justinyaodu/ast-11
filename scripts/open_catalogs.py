@@ -1,5 +1,8 @@
-#code to open the catalogs from sextractor and catalog fits file and then put them into 
-#arrays as seperate objects with the sorted out variables
+#FINAL GOAL: FIND POINT SOURCES
+#what this code does: code to open the catalogs from sextractor and catalog fits file
+#put them into arrays as seperate objects with the sorted out variables
+#find matched objects in between the sextractor catalog and the fits catalog
+#do some stuff with this (like finding the corrected pixel magnitude and finding the IC to detect point sources)
 
 from __future__ import division
 import astropy
@@ -190,7 +193,8 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		print("intercept: " + str(model.intercept_))
 		print("slope: " + str(model.coef_))'''
 		
-	#found these slope and intercept values from the code commented above	
+	#found these slope and intercept values from the code commented above
+	#these equations below are used to find the corrected pixel magnitudes for 4px and 8px
 	for obj in sex_obj:
 		index=0
 		g_corr_four=(0.8356859*obj.g_four)+4.126092533190409
@@ -204,3 +208,4 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight)
 		print(obj)
 		index=index+1
+	#finding the concentration index (IC) using iband and seeing if it is in between a threshold of [-0.1,0.15]	
