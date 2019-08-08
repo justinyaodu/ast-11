@@ -78,9 +78,9 @@ def distance (s_ra,f_ra,s_dec,f_dec):
 	rad_f_dec=f_dec*(math.pi/180)
 	length=math.sqrt(((s_ra-f_ra)*(math.cos(rad_f_dec)))**2+(s_dec-f_dec)**2)
 	return length
+
 	
-#sextractor_catalog always has to be in the g band	
-def open_catalog(catalog_file_name,g_sextractor_catalog):
+def open_catalog(catalog_file_name,sextractor_catalog):
 	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,ic,p_gc=([] for i in range(16))
 	arr=[x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,ic,p_gc]
 	hdul=fits.open(catalog_file_name)
@@ -127,7 +127,7 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 	for sex_index in range(len(g_x_image)):
 		#CHANGE THE MAG_ISO VARIABLE WHEN YOUKYUNG TELLS YOU WHICH MAGNITUDE TO USE
 		sex_obj.append(SextractorObj(g_alpha[sex_index],g_delta[sex_index],g_mag_aper[sex_index],u_mag_aper[sex_index],i_mag_aper[sex_index],z_mag_aper[sex_index],g_four[sex_index],g_eight[sex_index],u_four[sex_index],u_eight[sex_index],i_four[sex_index],i_eight[sex_index],z_four[sex_index],z_eight[sex_index]))
-	
+
 	#finding the matched objects between the sextractor catalog and the fits catalog
 	match_obj=[]
 	for f in fits_obj:
@@ -196,30 +196,37 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
 		
 	#found these slope and intercept values from the code commented above
 	#these equations below are used to find the corrected pixel magnitudes for 4px and 8px
-	for obj in sex_obj:
+	for i in range(len(sex_obj)):
 		index=0
-		g_corr_four=(0.8356859*obj.g_four)+4.126092533190409
-		g_corr_eight=(0.83805141*obj.g_eight)+4.4296660274459505
-		u_corr_four=(1.22978512*obj.u_four)-6.6390897878619235
-		u_corr_eight=(1.22608518*obj.u_eight)-5.605123805346295
-		i_corr_four=( 0.99802054*obj.i_four)-0.5124901699508975
-		i_corr_eight=(0.99959828*obj.i_eight)-0.12177102767153514
-		z_corr_four=(0.98753496*obj.z_four)-1.1294699641616717
-		z_corr_eight=(0.9920881*obj.z_eight)-0.32163449904708585
-		obj=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight,False)
+		g_corr_four=(0.8356859*sex_obj[i].g_four)+4.126092533190409
+		g_corr_eight=(0.83805141*sex_obj[i].g_eight)+4.4296660274459505
+		u_corr_four=(1.22978512*sex_obj[i].u_four)-6.6390897878619235
+		u_corr_eight=(1.22608518*sex_obj[i].u_eight)-5.605123805346295
+		i_corr_four=( 0.99802054*sex_obj[i].i_four)-0.5124901699508975
+		i_corr_eight=(0.99959828*sex_obj[i].i_eight)-0.12177102767153514
+		z_corr_four=(0.98753496*sex_obj[i].z_four)-1.1294699641616717
+		z_corr_eight=(0.9920881*sex_obj[i].z_eight)-0.32163449904708585
+		sex_obj[i]=CorrectedSextractorObj(g_alpha[index],g_delta[index],g_mag_aper[index],u_mag_aper[index],i_mag_aper[index],z_mag_aper[index],g_corr_four,g_corr_eight,u_corr_four,u_corr_eight,i_corr_four,i_corr_eight,z_corr_four,z_corr_eight,False)
 		index=index+1
 		
 	#finding the concentration index (IC) using iband and also checking the color restrictions
-	counter=0
-	for obj in sex_obj:
-		difference=obj.i_corr_four-obj.i_corr_eight
-		if difference>=-0.1 && difference<=0.15:
+	pass_difference=0
+	pass_xy=0
+	pass_equations=0
+	for x in range(len(sex_obj)):
+		difference=sex_obj[x].i_corr_four-sex_obj[x].i_corr_eight
+		if difference>=-0.1 and difference<=0.15:
+			pass_difference=pass_difference+1
 			#just use four pixel numbers for now but make sure to check what youkyung says
-			x_coord=u_corr_four-g_corr_four
-			y_coord=g_corr_four-i_corr_four
-			if (x_coord>0.8 && x_coord<1.9) && (y_coord<1.7 && y_coord>1):
-				if y_coord<(0.56*x_coord)+0.85 && y_coord>(0.6*x_coord)+0.35:
-					obj.inRange=True
-					counter=counter+1
+			x_coord=sex_obj[x].u_corr_four-sex_obj[x].g_corr_four
+			y_coord=sex_obj[x].g_corr_four-sex_obj[x].i_corr_four
+			if (x_coord>0.8 and x_coord<1.9) and (y_coord<1.7 and y_coord>1):
+				pass_xy=pass_xy+1
+				if y_coord<(0.56*x_coord)+0.85 and  y_coord>(0.6*x_coord)+0.35:
+					sex_obj[i].inRange=True
+					pass_equations=pass_equations+1
+	print("passed difference, passed xy, passed equations, length of sex_obj")
+	print(pass_difference)
+	print(pass_xy)
+	print(pass_equations)
 	print(len(sex_obj))
-	print(counter)
