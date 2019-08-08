@@ -80,7 +80,7 @@ def distance (s_ra,f_ra,s_dec,f_dec):
 	return length
 
 	
-def open_catalog(catalog_file_name,sextractor_catalog):
+def open_catalog(catalog_file_name,g_sextractor_catalog):
 	x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,ic,p_gc=([] for i in range(16))
 	arr=[x_sex,y_sex,ra,dec,umag,gmag,rmag,imag,zmag,umagerr,gmagerr,rmagerr,imagerr,zmagerr,ic,p_gc]
 	hdul=fits.open(catalog_file_name)
