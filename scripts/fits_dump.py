@@ -12,6 +12,8 @@ if __name__ == "__main__":
     i_len = len(data)
     j_len = len(data[0])
 
+    print >> sys.stderr, "loaded", filename
+
     print i_len, j_len
  
     for i in range(i_len):

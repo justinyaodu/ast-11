@@ -60,6 +60,7 @@ parse_command() {
 		    m[odsub]   : load model-subtracted images
 		    s[ource]   : load original images
 		    [mas]k     : load mask images
+		    j OR rmf   : load rmf images
 
 		    r[egion]   : load regions for each image
 		    c[lear]    : clear all regions
@@ -75,7 +76,7 @@ parse_command() {
 		    E          : disable efficient input mode
 
 		    M          : mark model-subtracted image as best
-		    R          : mark rmf image as best
+		    Q          : mark rmf image as best
 		    C          : clear marks
 
 		    d[ebug]    : toggle debug mode
@@ -121,6 +122,10 @@ parse_command() {
 		parse_command 'view' 'mask'
 		parse_command 'log'
 		;;
+	j | rmf)
+		parse_command 'view' 'rmf'
+		parse_command 'zscale'
+		;;
 	view)
 		if [ -z "$2" ]; then
 			echo "no target specified"
@@ -152,6 +157,8 @@ parse_command() {
 
 			sub_status="$(<"$status_file")"
 
+			region="${prefix}_mod${sub_status}.reg"
+
 			case "$target" in
 			modsub)
 				case "$sub_status" in
@@ -173,6 +180,10 @@ parse_command() {
 			mask)
 				case "$sub_status" in
 				0 | 3)
+					# 0 means it failed, so there cannot be a mask
+					# 3 is the pseudo pipeline, which does use the
+					# mask from the reference image, but it copies
+					# the .pl file which can't be viewed in DS9
 					continue
 					;;
 				1)
@@ -189,6 +200,10 @@ parse_command() {
 				;;
 			rmf)
 				image="${prefix}_rmf.fits"
+
+				# ignore region file entirely; do not want to
+				# see isophotes when viewing rmf image
+				region=""
 				;;
 			esac
 
@@ -308,7 +323,7 @@ parse_command() {
 		# reset zoom when viewing another galaxy
 		zoom=1
 
-		parse_command 'modsub2'
+		parse_command 'modsub'
 		;;
 	reset)
 		xpaset -p ds9 frame delete all

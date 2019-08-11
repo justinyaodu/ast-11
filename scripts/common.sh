@@ -62,12 +62,6 @@ remove_if_exists() {
 	done
 }
 
-# function which returns 0 (success) if using isofit
-using_isofit() {
-	# check if indicator file exists (this is created by running switch.sh)
-	[ -f ".using-isofit" ]
-}
-
 # function which finds the galaxy name and filter from a filename
 get_galaxy_and_filter() {
 	basename "$1" | grep -o "VCC[0-9][0-9][0-9][0-9]_[ugriz]"
@@ -115,22 +109,30 @@ print_banner() {
 
 # returns the best model-subtracted image corresponding to the input original image
 get_best() {
-	echo foo
-	if ! [ -f "$1" ]; then return 1; fi
-	echo bar
-	local image="$(sed -e 's/\.fits$/_modsub4.fits/g' <<< "$1")"
-	if [ -f "$image" ]; then echo "$image"; return; fi
-	echo baz
-	local image="$(sed -e 's/\.fits$/_modsub3.fits/g' <<< "$1")"
-	if [ -f "$image" ]; then echo "$image"; return; fi
-	echo green
-	local image="$(sed -e 's/\.fits$/_modsub2.fits/g' <<< "$1")"
-	if [ -f "$image" ]; then echo "$image"; return; fi
-	echo eggs
-	local image="$(sed -e 's/\.fits$/_modsub1.fits/g' <<< "$1")"
-	if [ -f "$image" ]; then echo "$image"; return; fi
-	echo ham
-	return 1
+	local best_file="$1.best"
+
+	if [ -f "$best_file" ]; then
+		cat "$best_file"
+		return
+	fi
+
+	local modsub="$(sed -e 's/\.fits$/_modsub3.fits/g' <<< "$1")"
+	[ -f "$modsub" ] || local modsub="$(sed -e 's/\.fits$/_modsub2.fits/g' <<< "$1")"
+	[ -f "$modsub" ] || local modsub="$(sed -e 's/\.fits$/_modsub1.fits/g' <<< "$1")"
+	[ -f "$modsub" ] || local modsub=""
+
+	local rmf="$(sed -e 's/\.fits$/_rmf.fits/g' <<< "$1")"
+	if [ -f "$rmf" ]; then
+		if [ -z "$modsub" ]; then
+			echo "$rmf"
+		else
+			echo_debug "no .best file: ambiguous between $modsub and $rmf"
+			return 1
+		fi
+	else
+		echo "$modsub"
+		return
+	fi
 }
 
 # print error message if we suspect that the user has not activated the conda environment

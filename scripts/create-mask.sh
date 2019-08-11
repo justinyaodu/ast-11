@@ -4,13 +4,23 @@
 
 source common.sh
 
-usage_message="usage: $0 <input.fits> <model.tab> [--clean]"
+usage_message="usage: $0 <input.fits> <model.tab> <use flag image (true/false)>"
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 2 ] || [ $# -eq 3 ] || abort "$usage_message"
+[ $# -eq 3 ] || abort "$usage_message"
 
 input_image="$1"
 model_table="$2"
+
+use_flag="$3"
+case "$use_flag" in
+true | false)
+	# ok, do nothing
+	;;
+*)
+	abort "value provided not true or false: $use_flag"
+	;;
+esac
 
 [ ${input_image: -13} == "_modsub1.fits" ] || abort "error: image file name does not end with _modsub1.fits"
 
@@ -20,20 +30,6 @@ seg_image="${input_image::-13}_seg.fits"
 
 # removes those same characters, but ends with .fits.pl instead
 pixel_list="${input_image::-13}.fits.pl"
-
-clean_option="$3"
-
-# if option specified
-if [ "$clean_option" != "" ]; then
-	# if option is correctly specified, delete files
-	if [ "$clean_option" == "--clean" ]; then
-		rm -f "$seg_image" "$pixel_list"
-		exit 0
-	# otherwise, print usage message
-	else
-		abort "$usage_message"
-	fi
-fi
 
 assert_exists "$input_image"
 assert_does_not_exist "$seg_image"
@@ -67,10 +63,15 @@ while ! ./excessive-mask-check.sh "$model_table" "$seg_image"; do
 	./sextractor-mask.sh "$input_image" "$seg_image" "$threshold"
 done
 
-# combine converted flag image and seg image
-converted_flag_image="${input_image::-13}_flag_converted.fits"
-mask_image="${input_image::-13}_mask.fits"
-assert_successful ./imarith.sh "$seg_image" "+" "$converted_flag_image" "$mask_image"
+if [ "$use_flag" = 'true' ]; then
+	# combine converted flag image and seg image
+	converted_flag_image="${input_image::-13}_flag_converted.fits"
+	mask_image="${input_image::-13}_mask.fits"
+	assert_successful ./imarith.sh "$seg_image" "+" "$converted_flag_image" "$mask_image"
 
-# convert mask image to pixel list format
-assert_successful ./imcopy.sh "$mask_image" "$pixel_list"
+	# convert mask image to pixel list format
+	assert_successful ./imcopy.sh "$mask_image" "$pixel_list"
+else
+	# copy seg image directly
+	assert_successful ./imcopy.sh "$seg_image" "$pixel_list"
+fi

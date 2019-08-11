@@ -5,12 +5,9 @@
 
 int i_len, j_len;
 
-// int ring_i[RING_NUM] = {0, 4, 7, 8, 7, 4, 0, -4, -7, -8, -7, -4};
-// int ring_j[RING_NUM] = {8, 7, 4, 0, -4, -7, -8, -7, -4, 0, 4, 7};
 int ring_i[RING_NUM] = {1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 10, 0, -10, 0};
 int ring_j[RING_NUM] = {10, 10, 10, 9, 9, 8, 8, 7, 6, 5, 4, 3, 2, 1, -10, -10, -10, -9, -9, -8, -8, -7, -6, -5, -4, -3, -2, -1, -10, -10, -10, -9, -9, -8, -8, -7, -6, -5, -4, -3, -2, -1, 10, 10, 10, 9, 9, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0, 10, 0, -10};
-// int ring_i[RING_NUM] = {2, 0, -2, 0};
-// int ring_j[RING_NUM] = {0, 2, 0, -2};
+
 float ring_values[RING_NUM];
 
 float *data;
@@ -71,7 +68,10 @@ int main(void)
 
 	for (int i = 0; i < i_len; i++)
 	{
-		fprintf(stderr, "processing row %d of %d\n", i + 1, i_len);
+		if (i % 100 == 0)
+		{
+			fprintf(stderr, "processing row %d of %d\n", i + 1, i_len);
+		}
 		for (int j = 0; j < j_len; j++)
 		{
 			printf("%f ", data[i * i_len + j] - ring_median(i, j));

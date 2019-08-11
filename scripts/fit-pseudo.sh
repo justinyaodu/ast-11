@@ -26,12 +26,8 @@ remove_if_exists "$table_file"
 # generate parameter files
 assert_successful ./generate-geompar.sh "$galaxy_and_filter" "$image_file"
 
-# run ISOFIT or Ellipse, depending on configuration
-if using_isofit; then
-	run_and_log "$log_file" ./isofit-pseudo.cl "$image_file" "$table_file" "$reference_table"
-else
-	run_and_log "$log_file" ./ellipse-pseudo.cl "$image_file" "$table_file" "$reference_table"
-fi
+# run ISOFIT
+run_and_log "$log_file" ./isofit-pseudo.cl "$image_file" "$table_file" "$reference_table"
 
 # exit indicating success if table file was created
 [ -f "$table_file" ] && exit 0

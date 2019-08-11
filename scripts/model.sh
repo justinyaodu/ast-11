@@ -24,32 +24,42 @@ remove_if_exists "$output_image"
 # get background light value from table
 background="$(./background.sh "$table_file")"
 
-# set appropriate timeout value
-galaxy="$(grep -o 'VCC....' <<< "$(basename "$table_file")")"
-case "$galaxy" in
-VCC0197)
-	timeout="2h"
-	;;
-*)
-	timeout="10m"
-	;;
-esac
-echo_debug "timeout: $timeout"
+# function to run cmodel and kill it if it stops responding
+safe_cmodel() {
+	# log to file (can't use run_and_log because we also need to run in background)
+	# start a subshell so that we can send a SIGQUIT to it to kill it if we need to
+	# since cmodel seems to become completely unresponsive to anything else
+	# (when run interactively, the only thing I've found that can kill a stuck
+	# cmodel task is ctrl+backslash, which also kills the Bash script running it)
+	./cmodel.cl "$table_file" "$output_image" "$background" "$1" 2>&1 | tee "$log_file" &
+	local cl_pid="$!"
+
+	# while cmodel.cl is still alive
+	while kill -0 "$cl_pid" 2> /dev/null; do
+		# make sure this loop doesn't run too often
+		sleep 1
+
+		# how long it's been since the log file was written to, in seconds
+		age="$(($(date +'%s') - $(date +'%s' -r "$log_file")))"
+
+		# if log file hasn't been modified in the last 15 seconds
+		if [ "$age" -gt '15' ]; then
+			# assume the process is completely stuck, and kill it
+			model_pid="$(ps -o 'comm= pid=' | grep '^x_isophote.e' | grep -o '[0-9]*')"
+			echo_debug "looks like modeling task (PID $model_pid) is stuck, killing"
+			kill "$model_pid"
+			break
+		fi
+	done
+}
 
 # create model, running appropriate cl script
-if using_isofit; then
-	assert_successful run_and_log "$log_file" timeout "$timeout" ./cmodel.cl "$table_file" "$output_image" "$background" "yes"
-else
-	assert_successful run_and_log "$log_file" timeout "$timeout" ./bmodel.cl "$table_file" "$output_image" "$background" "yes"
-fi
+safe_cmodel 'yes'
 
 # if error encountered, try again but do not use higher harmonics
 if grep -q "ERROR" "$log_file"; then
-	if using_isofit; then
-		assert_successful run_and_log "$log_file" timeout "$timeout" ./cmodel.cl "$table_file" "$output_image" "$background" "no"
-	else
-		assert_successful run_and_log "$log_file" timeout "$timeout" ./bmodel.cl "$table_file" "$output_image" "$background" "no"
-	fi
+	remove_if_exists "$output_image"
+	safe_cmodel 'no'
 fi
 
 # if an error still encountered, exit indicating failure

@@ -15,7 +15,8 @@ assert_exists "$inspection"
 process_action() {
 	galaxy_and_filter="$1"
 	galaxy="$(grep -o "VCC...." <<< "$galaxy_and_filter")"
-	action="$2"
+	whether_rmf="$2"
+	action="$3"
 
 	original_image="$containing_dir/$galaxy/$galaxy_and_filter.fits"
 
@@ -25,18 +26,27 @@ process_action() {
 		return
 	fi
 
+	case "$whether_rmf" in
+		TRUE)
+			echo_debug "running ring median filter"
+			./ring-median.sh "$original_image"
+			;;
+		FALSE)
+			;;
+		*)
+			abort "illegal value"
+			;;
+	esac
+
 	case "$action" in
-		ignore | ok | ref)
-			echo_debug "doing nothing"
+		ignore | ok | ref | bad)
+			echo_debug "not running pseudo pipeline"
 			;;
 		redo)
 			echo_debug "running pseudo pipeline"
-			reference="$3"
+			reference="$4"
+			[ -z "$reference" ] && abort "no reference specified"
 			./main-pseudo.sh "$original_image" "$reference"
-			;;
-		rmf)
-			echo_debug "running ring median filter"
-			./ring-median.sh "$original_image"
 			;;
 		*)
 			abort "unknown action: '$action'"

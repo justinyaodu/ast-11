@@ -13,7 +13,7 @@ assert_exists "$original_image"
 
 output_image="$(sed -e 's/\.fits$/_rmf.fits/g' <<< "$original_image")"
 if [ -f "$output_image" ] && [ "$output_image" -nt "$original_image" ]; then
-	debug_echo "final image $output_image up to date, skipping"
+	echo_debug "final image $output_image up to date, skipping"
 	exit 0
 fi
 

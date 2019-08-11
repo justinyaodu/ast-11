@@ -29,7 +29,7 @@ for galaxy_dir in "$containing_dir"/*; do
 		
 		print_banner "processing image file $file"
 
-		./main.sh "$file"
+		./main.sh "$file" 'true'
 	done
 
 	# rerun all images without flag image masking if they all fail
@@ -52,7 +52,7 @@ for galaxy_dir in "$containing_dir"/*; do
 				
 				print_banner "reprocessing image file $file"
 
-				./main-no-flag-mask.sh "$file"
+				./main.sh "$file" 'false'
 			done
 		fi
 	fi

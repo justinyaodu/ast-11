@@ -5,9 +5,19 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "usage: $0 <original_image.fits>"
+[ $# -eq 2 ] || abort "usage: $0 <original_image.fits> <flag image masking (true/false)>"
 
 original_image="$1"
+
+use_flag="$2"
+case "$use_flag" in
+true | false)
+	# ok, do nothing
+	;;
+*)
+	abort "not true or false: $use_flag"
+	;;
+esac
 
 # abort if input file doesn't exist
 assert_exists "$original_image"
@@ -36,10 +46,12 @@ finish() {
 	exit 0
 }
 
-# convert flag image
-./mask-from-flag.sh "$(sed -e 's/\.fits/_flag.fits/g' <<< "$original_image")"
-# create initial mask from flag image only
-./imcopy.sh "$(sed -e 's/\.fits/_flag_converted.fits/g' <<< "$original_image")" "$original_image.pl"
+if [ "$use_flag" = 'true' ]; then
+	# convert flag image
+	./mask-from-flag.sh "$(sed -e 's/\.fits/_flag.fits/g' <<< "$original_image")"
+	# create initial mask from flag image only
+	./imcopy.sh "$(sed -e 's/\.fits/_flag_converted.fits/g' <<< "$original_image")" "$original_image.pl"
+fi
 
 # generate first pass light model
 run_and_log "${name_base}_createmodel1.log" ./create-model.sh "$original_image" "1" || finish 0
@@ -49,7 +61,7 @@ run_and_log "${name_base}_createmodel1.log" ./create-model.sh "$original_image" 
 
 # generate mask for remaining bright objects
 # enters if block if masking failed
-if ! run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab"; then
+if ! run_and_log "${name_base}_mask.log" ./create-mask.sh "${name_base}_modsub1.fits" "${name_base}_mod1.tab" "$use_flag"; then
 	# use modsub1 as the final image
 	finish 1
 else

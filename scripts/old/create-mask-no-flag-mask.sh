@@ -21,8 +21,6 @@ seg_image="${input_image::-13}_mask.fits"
 # removes those same characters, but ends with .fits.pl instead
 pixel_list="${input_image::-13}.fits.pl"
 
-clean_option="$3"
-
 assert_exists "$input_image"
 assert_does_not_exist "$seg_image"
 remove_if_exists "$pixel_list"

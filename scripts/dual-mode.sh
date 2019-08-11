@@ -5,24 +5,21 @@
 source common.sh
 
 # print usage message if number of parameters is incorrect
-[ $# -eq 1 ] || abort "usage: $0 <original_image.fits.dual>"
+[ $# -eq 1 ] || abort "usage: $0 <original_image.fits>"
 
-grep -q '\.fits\.dual$' <<< "$1" || abort "not a .fits.dual file: $1"
+measure_original="$1"
+detect_original="$(sed -e 's/_[ugriz].fits/_g.fits/g' <<< "$measure_original")"
 
-measure_dual="$1"
-detect_dual="$(sed -e 's/_[ugriz].fits.dual/_g.fits.dual/g' <<< "$1")"
-assert_exists "$detect_dual" "$measure_dual"
-
-detect_image="$(dirname "$detect_dual")/$(<"$detect_dual")"
-measure_image="$(dirname "$measure_dual")/$(<"$measure_dual")"
+measure_image="$(get_best "$measure_original")"
+detect_image="$(get_best "$detect_original")"
 assert_exists "$detect_image" "$measure_image"
 
-detect_weight="$(sed -e 's/.fits.dual/_sig.fits/g' <<< "$detect_dual")"
-detect_flag="$(sed -e 's/.fits.dual/_flag.fits/g' <<< "$detect_dual")"
+detect_weight="$(sed -e 's/.fits$/_sig.fits/g' <<< "$detect_original")"
+detect_flag="$(sed -e 's/.fits$/_flag.fits/g' <<< "$detect_original")"
 assert_exists "$detect_weight" "$detect_flag"
 
-measure_weight="$(sed -e 's/.fits.dual/_sig.fits/g' <<< "$measure_dual")"
-measure_flag="$(sed -e 's/.fits.dual/_flag.fits/g' <<< "$measure_dual")"
+measure_weight="$(sed -e 's/.fits$/_sig.fits/g' <<< "$measure_original")"
+measure_flag="$(sed -e 's/.fits$/_flag.fits/g' <<< "$measure_original")"
 assert_exists "$measure_weight" "$measure_flag"
 
 catalog_file="$(dirname "$measure_image")/$(grep -o 'VCC...._[ugriz]' <<< "$measure_image").cat"

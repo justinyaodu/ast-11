@@ -1,16 +1,18 @@
 import sys
-import re
 import numpy as np
+import csv
 
 file = sys.stdin
 line_list = []
-for line in file:
+for line in csv.reader(file, delimiter=','):
     # discard other lines (e.g. header)
-    if line[:3] != "VCC": continue
-    line_list.append(np.array(re.split(",", line.strip())))
+    if line[0][:3] != "VCC": continue
+    line_list.append(line)
 parsed_file = np.array(line_list)
 
 galaxies=dict()
+errors=[]
+actions=[]
 
 for i in range(0, len(parsed_file), 5):
     gal_lines = parsed_file[i:i+5]
@@ -22,18 +24,26 @@ for i in range(0, len(parsed_file), 5):
     for line in gal_lines:
         if line[2] == "ref":
             if ref != "":
-                print >> sys.stderr, "multiple references specified for ", galaxy
-                sys.exit(1)
+                errors.append("multiple references specified for " + galaxy)
             else:
                 ref = line[0]
 
     for line in gal_lines:
-        if line[4] == "redo":
+        if line[5] == "":
+            errors.append("no action specified for " + galaxy)
+            continue
+        elif line[5] == "redo":
             if ref == "":
-                print >> sys.stderr, "no reference specified for ", galaxy
+                errors.append("no reference specified for " + galaxy)
+                continue
             else:
                 action = "redo " + ref
         else:
-            action = line[4]
+            action = line[5]
             
-        print line[0] + " " + action
+        actions.append(line[0] + " " + line[3] + " " + action)
+
+if (len(errors) == 0):
+    for action in actions: print action
+else:
+    for error in errors: print >> sys.stderr, "ERROR: " + error
