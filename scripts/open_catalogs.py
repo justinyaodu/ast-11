@@ -200,7 +200,7 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
                     corr_sex_obj[x].inRange=True
                     pass_equations=pass_equations+1
                     print("\n")
-                    print(corr_sex_obj)
+                    print(corr_sex_obj[x])
                     
     f_pass_difference=0
     f_pass_xy=0
