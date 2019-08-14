@@ -50,7 +50,7 @@ class CorrectedSextractorObj:
         self.z_corr_eight=z_corr_eight
         self.inRange=inRange
     def __str__(self):
-        return "Corrected SEXTRACTOR:" + "\n" + "g_corr_4: "+str(self.g_corr_four)+ "\n" + "g_corr_eight: " + str(self.g_corr_eight)+ "\n" +"u_corr_four: "+str(self.u_corr_four)+ "\n" + "u_corr_eight: "+str(self.u_corr_eight)+ "\n" +"i_corr_four: "+str(self.i_corr_four)+ "\n" +"i_corr_eight: "+str(self.i_corr_eight)+ "\n" +"z_corr_four: "+str(self.z_corr_four)+ "\n" +"z_corr_eight: "+str(self.z_corr_eight)
+        return "Corrected SEXTRACTOR:" + "\n" + "ra: "+str(self.ra)+ "\n" + "dec: " + str(self.dec)
 #fits objects
 class FitsObj:
     def __init__(self,ra,dec,conc_index,gmag,umag,imag,zmag,insideRange):
@@ -64,7 +64,7 @@ class FitsObj:
         self.insideRange=insideRange
 
     def __str__(self):
-        return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)+"   magnitude: " +str(self.mag)+"   IC: " +str(self.corr_index)
+        return "FITS = ra: "+str(self.ra)+ "   dec: " + str(self.dec)
 #the objects that match in the sextractor and fits objects arrays
 class Match:
     def __init__(self,sex_object,fits_object,distance):
@@ -199,6 +199,9 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
                 if y_coord<(0.56*x_coord)+0.85 and  y_coord>(0.6*x_coord)+0.35:
                     corr_sex_obj[x].inRange=True
                     pass_equations=pass_equations+1
+                    print("\n")
+                    print(corr_sex_obj)
+                    
     f_pass_difference=0
     f_pass_xy=0
     f_pass_equations=0
@@ -214,7 +217,8 @@ def open_catalog(catalog_file_name,g_sextractor_catalog):
                 if y_coord<(0.56*x_coord)+0.85 and  y_coord>(0.6*x_coord)+0.35:
                     fits_obj[x].insideRange=True
                     f_pass_equations=f_pass_equations+1
-    print("passed difference, passed xy, passed equations, length of sex_obj")
-    print(pass_difference)
-    print(pass_xy)
-    print(pass_equations)
+                    
+    #print("passed difference, passed xy, passed equations, length of sex_obj")
+    #print(pass_difference)
+    #print(pass_xy)
+    #print(pass_equations)
