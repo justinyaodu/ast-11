@@ -2,9 +2,6 @@
 
 # uses cmodel to generate an image from an ISOFIT light model
 
-# initialize environment
-cl < init.cl
-
 # initialize variables so user isn't prompted
 string infile = ""
 string outfile = ""

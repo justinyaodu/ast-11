@@ -2,9 +2,6 @@
 
 # use ISOFIT to generate a galaxy light model
 
-# initialize environment 
-cl < init.cl
-
 # initialize variables so user isn't prompted
 string imgfile = ""
 string tablefile = ""

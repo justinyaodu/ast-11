@@ -56,5 +56,5 @@ process_action() {
 
 python process_inspection_spreadsheet.py < "$inspection" | while read -r line; do
 	print_banner "$line"
-	process_action $line
+	echo process_action $line
 done

@@ -3,9 +3,6 @@
 # dump intensity data from ISOFIT model, so the outermost intensity value
 # can be used as the background light value
 
-# initialize environment 
-cl < init.cl
-
 # initialize variables so user isn't prompted
 string tablefile = ""
 string dumpfile = ""

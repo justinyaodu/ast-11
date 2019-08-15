@@ -2,9 +2,6 @@
 
 # use tprint to print table data
 
-# initialize environment 
-cl < init.cl
-
 # initialize variables so user isn't prompted
 string tablefile = ""
 string columns = ""

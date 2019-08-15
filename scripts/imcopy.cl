@@ -2,9 +2,6 @@
 
 # uses imcopy to copy an image
 
-# initialize environment
-cl < init.cl
-
 # initialize variables so user isn't prompted
 string infile = ""
 string outfile = ""

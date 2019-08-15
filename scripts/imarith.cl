@@ -2,9 +2,6 @@
 
 # wrapper for imarith
 
-# initialize environment 
-cl < init.cl
-
 # initialize variables so user isn't prompted
 string infile1 = ""
 string operator = ""
