@@ -12,6 +12,15 @@
 // tentatively shown to have a ~25% performance improvement
 #define BATCH_SCANF
 
+// custom I/O buffering
+#define CUSTOM_BUFFERING
+
+#ifdef CUSTOM_BUFFERING
+// I/O buffers
+char in_buffer[32768];
+char out_buffer[32768];
+#endif
+
 int i_len, j_len;
 
 int ring_i[RING_NUM] = {1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 10, 0, -10, 0};
@@ -274,7 +283,13 @@ float ring_median_unsafe(int i_center, int j_center)
 
 int main(void)
 {
-	// output results
+#ifdef CUSTOM_BUFFERING
+	// enable custom buffering for input and output
+	setvbuf(stdin, in_buffer, _IOFBF, sizeof(in_buffer));
+	setvbuf(stdout, out_buffer, _IOFBF, sizeof(out_buffer));
+#endif
+
+	// get width and height of image
 	scanf("%d %d", &i_len, &j_len);
 
 	// allocate memory
