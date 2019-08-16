@@ -8,6 +8,10 @@
 // valid options are HEAP and SHELL, default is insertion
 #define SORT_TYPE SHELL
 
+// whether to scan input in chunks of 100
+// tentatively shown to have a ~25% performance improvement
+#define BATCH_SCANF
+
 int i_len, j_len;
 
 int ring_i[RING_NUM] = {1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 10, 0, -10, 0};
@@ -166,6 +170,108 @@ float ring_median_unsafe(int i_center, int j_center)
 	return (ring_values[RING_NUM/2 - 1] + ring_values[RING_NUM/2]) / 2;
 }
 
+#define SCANF_100(i, i_len, j) scanf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", \
+&data[i * i_len + j +  0],\
+&data[i * i_len + j +  1],\
+&data[i * i_len + j +  2],\
+&data[i * i_len + j +  3],\
+&data[i * i_len + j +  4],\
+&data[i * i_len + j +  5],\
+&data[i * i_len + j +  6],\
+&data[i * i_len + j +  7],\
+&data[i * i_len + j +  8],\
+&data[i * i_len + j +  9],\
+&data[i * i_len + j + 10],\
+&data[i * i_len + j + 11],\
+&data[i * i_len + j + 12],\
+&data[i * i_len + j + 13],\
+&data[i * i_len + j + 14],\
+&data[i * i_len + j + 15],\
+&data[i * i_len + j + 16],\
+&data[i * i_len + j + 17],\
+&data[i * i_len + j + 18],\
+&data[i * i_len + j + 19],\
+&data[i * i_len + j + 20],\
+&data[i * i_len + j + 21],\
+&data[i * i_len + j + 22],\
+&data[i * i_len + j + 23],\
+&data[i * i_len + j + 24],\
+&data[i * i_len + j + 25],\
+&data[i * i_len + j + 26],\
+&data[i * i_len + j + 27],\
+&data[i * i_len + j + 28],\
+&data[i * i_len + j + 29],\
+&data[i * i_len + j + 30],\
+&data[i * i_len + j + 31],\
+&data[i * i_len + j + 32],\
+&data[i * i_len + j + 33],\
+&data[i * i_len + j + 34],\
+&data[i * i_len + j + 35],\
+&data[i * i_len + j + 36],\
+&data[i * i_len + j + 37],\
+&data[i * i_len + j + 38],\
+&data[i * i_len + j + 39],\
+&data[i * i_len + j + 40],\
+&data[i * i_len + j + 41],\
+&data[i * i_len + j + 42],\
+&data[i * i_len + j + 43],\
+&data[i * i_len + j + 44],\
+&data[i * i_len + j + 45],\
+&data[i * i_len + j + 46],\
+&data[i * i_len + j + 47],\
+&data[i * i_len + j + 48],\
+&data[i * i_len + j + 49],\
+&data[i * i_len + j + 50],\
+&data[i * i_len + j + 51],\
+&data[i * i_len + j + 52],\
+&data[i * i_len + j + 53],\
+&data[i * i_len + j + 54],\
+&data[i * i_len + j + 55],\
+&data[i * i_len + j + 56],\
+&data[i * i_len + j + 57],\
+&data[i * i_len + j + 58],\
+&data[i * i_len + j + 59],\
+&data[i * i_len + j + 60],\
+&data[i * i_len + j + 61],\
+&data[i * i_len + j + 62],\
+&data[i * i_len + j + 63],\
+&data[i * i_len + j + 64],\
+&data[i * i_len + j + 65],\
+&data[i * i_len + j + 66],\
+&data[i * i_len + j + 67],\
+&data[i * i_len + j + 68],\
+&data[i * i_len + j + 69],\
+&data[i * i_len + j + 70],\
+&data[i * i_len + j + 71],\
+&data[i * i_len + j + 72],\
+&data[i * i_len + j + 73],\
+&data[i * i_len + j + 74],\
+&data[i * i_len + j + 75],\
+&data[i * i_len + j + 76],\
+&data[i * i_len + j + 77],\
+&data[i * i_len + j + 78],\
+&data[i * i_len + j + 79],\
+&data[i * i_len + j + 80],\
+&data[i * i_len + j + 81],\
+&data[i * i_len + j + 82],\
+&data[i * i_len + j + 83],\
+&data[i * i_len + j + 84],\
+&data[i * i_len + j + 85],\
+&data[i * i_len + j + 86],\
+&data[i * i_len + j + 87],\
+&data[i * i_len + j + 88],\
+&data[i * i_len + j + 89],\
+&data[i * i_len + j + 90],\
+&data[i * i_len + j + 91],\
+&data[i * i_len + j + 92],\
+&data[i * i_len + j + 93],\
+&data[i * i_len + j + 94],\
+&data[i * i_len + j + 95],\
+&data[i * i_len + j + 96],\
+&data[i * i_len + j + 97],\
+&data[i * i_len + j + 98],\
+&data[i * i_len + j + 99])
+
 int main(void)
 {
 	// output results
@@ -174,6 +280,8 @@ int main(void)
 	// allocate memory
 	data = (float*) malloc(i_len * j_len * sizeof(float));
 
+	clock_t input_start = clock();
+
 	// read in data
 	for (int i = 0; i < i_len; i++)
 	{
@@ -181,14 +289,30 @@ int main(void)
 		{
 			fprintf(stderr, "reading row %d of %d\n", i + 1, i_len);
 		}
-		for (int j = 0; j < j_len; j++)
+
+		int j = 0;
+#ifdef BATCH_SCANF
+		while (j_len - j >= 100)
+		{
+			SCANF_100(i, i_len, j);
+			j += 100;
+		}
+#endif
+		while (j < j_len)
 		{
 			scanf("%f", &data[i * i_len + j]);
+			j++;
 		}
 	}
 
+	clock_t input_end = clock();
+
+	double input_total_sec = ((double) (input_end - input_start)) / CLOCKS_PER_SEC;
+	int input_nsec_per_pixel = (int)(input_total_sec / (i_len * j_len) * 10e9);
+
+	fprintf(stderr, "input parsed in %.2f CPU seconds, %d nsec/pixel\n", input_total_sec, input_nsec_per_pixel);
 	// record start time
-	clock_t start = clock();
+	clock_t compute_start = clock();
 
 	for (int i = 0; i < i_len; i++)
 	{
@@ -227,12 +351,12 @@ int main(void)
 		printf("\n");
 	}
 
-	clock_t end = clock();
+	clock_t compute_end = clock();
 
-	double total_sec = ((double) (end - start)) / CLOCKS_PER_SEC;
+	double total_sec = ((double) (compute_end - compute_start)) / CLOCKS_PER_SEC;
 	int nsec_per_pixel = (int)(total_sec / (i_len * j_len) * 10e9);
 
-	fprintf(stderr, "finished in %.2f seconds, %d nsec/pixel\n", total_sec, nsec_per_pixel);
+	fprintf(stderr, "finished in %.2f CPU seconds, %d nsec/pixel\n", total_sec, nsec_per_pixel);
 
 	return 0;
 }
