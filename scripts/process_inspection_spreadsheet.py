@@ -44,6 +44,7 @@ for i in range(0, len(parsed_file), 5):
         actions.append(line[0] + " " + line[3] + " " + action)
 
 if (len(errors) == 0):
+    print >> sys.stderr, "actions: " + str(len(actions))
     for action in actions: print action
 else:
     for error in errors: print >> sys.stderr, "ERROR: " + error
