@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define RING_NUM 60
 #define RING_RADIUS 10
+
+// valid options are HEAP and SHELL, default is insertion
+#define SORT_TYPE SHELL
 
 int i_len, j_len;
 
@@ -15,6 +19,7 @@ float *data;
 
 void sort_ring_values(int count)
 {
+#if SORT_TYPE == HEAP
 	// construct max heap
 	for (int i = 1; i < count; i++)
 	{
@@ -85,6 +90,45 @@ void sort_ring_values(int count)
 
 		ring_values[dest] = value;
 	}
+#elif SORT_TYPE == SHELL
+	static int[] gaps = {10, 4, 1};
+
+	for (int gi = 0; gi < sizeof(gaps) / sizeof(gaps[0]); gi++)
+	{
+		int gap = gaps[gi];
+		
+		for (int start = 0; start < gap; start++)
+		{
+			for (int i = gap; i < count; i++)
+			{
+				float value = ring_values[i];
+				int dest = i;
+
+				while (dest > start && ring_values[dest - gap] > value)
+				{
+					ring_values[dest] = ring_values[dest - gap];
+					dest -= gap;
+				}
+				
+				ring_values[dest] = value;
+			}
+		}
+	}
+#else
+	for (int i = 1; i < count; i++)
+	{
+		float value = ring_values[i];
+		int j = i;
+
+		while (j > 0 && ring_values[j - 1] > value)
+		{
+			ring_values[j] = ring_values[j - 1];
+			j--;
+		}
+
+		ring_values[j] = value;
+	}
+#endif
 }
 
 float ring_median(int i_center, int j_center)
@@ -131,6 +175,7 @@ int main(void)
 	data = (float*) malloc(i_len * j_len * sizeof(float));
 
 	// read in data
+	fprintf(stderr, "reading in data...\n");
 	for (int i = 0; i < i_len; i++)
 	{
 		for (int j = 0; j < j_len; j++)
@@ -138,6 +183,9 @@ int main(void)
 			scanf("%f", &data[i * i_len + j]);
 		}
 	}
+
+	// record start time
+	clock_t start = clock();
 
 	for (int i = 0; i < i_len; i++)
 	{
@@ -175,6 +223,13 @@ int main(void)
 		}
 		printf("\n");
 	}
+
+	clock_t end = clock();
+
+	double total_sec = ((double) (end - start)) / CLOCKS_PER_SEC;
+	int nsec_per_pixel = (int)(total_sec / (i_len * j_len) * 10e9);
+
+	fprintf(stderr, "finished in %.2f seconds, %d nsec/pixel\n", total_sec, nsec_per_pixel);
 
 	return 0;
 }

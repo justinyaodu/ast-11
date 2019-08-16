@@ -2,6 +2,6 @@ table,f,a,"",,,"Name of table"
 column,s,a,"",,,"Name of column"
 row,i,a,,1,,"Number of row"
 format,b,h,yes,,,"Format the value using table print format?"
-value,s,h,"-79.26",,,"Value of table element"
+value,s,h,"34.85",,,"Value of table element"
 undef,b,h,no,,,"Is table element undefined?"
 mode,s,h,"al",,,
