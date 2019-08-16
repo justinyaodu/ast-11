@@ -175,9 +175,12 @@ int main(void)
 	data = (float*) malloc(i_len * j_len * sizeof(float));
 
 	// read in data
-	fprintf(stderr, "reading in data...\n");
 	for (int i = 0; i < i_len; i++)
 	{
+		if (i % 100 == 0)
+		{
+			fprintf(stderr, "reading row %d of %d\n", i + 1, i_len);
+		}
 		for (int j = 0; j < j_len; j++)
 		{
 			scanf("%f", &data[i * i_len + j]);
