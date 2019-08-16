@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+// number of points in ring
 #define RING_NUM 60
+
+// radius of ring (used to eliminate unnecessary bounds checks)
 #define RING_RADIUS 10
 
 // valid options are HEAP and SHELL, default is insertion
@@ -12,24 +15,21 @@
 // tentatively shown to have a ~25% performance improvement
 #define BATCH_SCANF
 
-// custom I/O buffering
-#define CUSTOM_BUFFERING
-
-#ifdef CUSTOM_BUFFERING
-// I/O buffers
-char in_buffer[32768];
-char out_buffer[32768];
-#endif
-
-int i_len, j_len;
-
 int ring_i[RING_NUM] = {1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 10, -1, -2, -3, -4, -5, -6, -7, -8, -8, -9, -9, -10, -10, -10, 10, 0, -10, 0};
 int ring_j[RING_NUM] = {10, 10, 10, 9, 9, 8, 8, 7, 6, 5, 4, 3, 2, 1, -10, -10, -10, -9, -9, -8, -8, -7, -6, -5, -4, -3, -2, -1, -10, -10, -10, -9, -9, -8, -8, -7, -6, -5, -4, -3, -2, -1, 10, 10, 10, 9, 9, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0, 10, 0, -10};
 
+// width and height of image
+int i_len, j_len;
+
+// pixel values in current ring
 float ring_values[RING_NUM];
 
+// image data
 float *data;
 
+// rearrange the ring_values array such that the values needed for the
+// median computation are in the same place that they would be if the array
+// was to be sorted
 void sort_ring_values(int count)
 {
 #if SORT_TYPE == HEAP
@@ -144,6 +144,7 @@ void sort_ring_values(int count)
 #endif
 }
 
+// find ring median of a pixel
 float ring_median(int i_center, int j_center)
 {
 	int count = 0;
@@ -179,6 +180,7 @@ float ring_median_unsafe(int i_center, int j_center)
 	return (ring_values[RING_NUM/2 - 1] + ring_values[RING_NUM/2]) / 2;
 }
 
+// macro to scanf a hundred adjacent floats into the data array
 #define SCANF_100(i, i_len, j) scanf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", \
 &data[i * i_len + j +  0],\
 &data[i * i_len + j +  1],\
@@ -283,12 +285,6 @@ float ring_median_unsafe(int i_center, int j_center)
 
 int main(void)
 {
-#ifdef CUSTOM_BUFFERING
-	// enable custom buffering for input and output
-	setvbuf(stdin, in_buffer, _IOFBF, sizeof(in_buffer));
-	setvbuf(stdout, out_buffer, _IOFBF, sizeof(out_buffer));
-#endif
-
 	// get width and height of image
 	scanf("%d %d", &i_len, &j_len);
 
