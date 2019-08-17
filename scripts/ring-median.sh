@@ -8,8 +8,9 @@ source common.sh
 [ $# -eq 1 ] || abort "usage: $0 <original_image.fits>"
 
 original_image="$1"
+ring_median_executable="./ring_median"
 
-assert_exists "$original_image"
+assert_exists "$original_image" "$ring_median_executable"
 
 output_image="$(sed -e 's/\.fits$/_rmf.fits/g' <<< "$original_image")"
 if [ -f "$output_image" ] && [ "$output_image" -nt "$original_image" ]; then
@@ -17,4 +18,4 @@ if [ -f "$output_image" ] && [ "$output_image" -nt "$original_image" ]; then
 	exit 0
 fi
 
-assert_successful python fits_dump.py "$original_image" | ./ring_median | python fits_undump.py "$output_image"
+assert_successful python fits_dump.py "$original_image" | "$ring_median_executable" | python fits_undump.py "$output_image"

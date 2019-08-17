@@ -76,7 +76,7 @@ parse_command() {
 		    E          : disable efficient input mode
 
 		    M          : mark model-subtracted image as best
-		    Q          : mark rmf image as best
+		    J          : mark rmf image as best
 		    C          : clear marks
 
 		    d[ebug]    : toggle debug mode
@@ -262,7 +262,7 @@ parse_command() {
 	E)
 		read_opts=''
 		;;
-	M | R | C)
+	M | J | C)
 		dir="${galaxy_dirs[$galaxy_index]}"
 		for original in "$dir"/VCC????_?.fits; do
 			case "$1" in
@@ -270,7 +270,7 @@ parse_command() {
 				status_num="$(<"$original.status")"
 				best="$(sed -e "s/\.fits$/_modsub$status_num.fits/g" <<< "$original")"
 				;;
-			R)
+			J)
 				best="$(sed -e 's/\.fits$/_rmf.fits/g' <<< "$original")"
 				;;
 			C)

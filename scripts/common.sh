@@ -135,6 +135,11 @@ get_best() {
 	fi
 }
 
+# stop if a file named "STOP" exists in the current directory
+stop_if_requested() {
+	[ -f "STOP" ] && abort "stop file exists"
+}
+
 # print error message if we suspect that the user has not activated the conda environment
 # do this by checking for the presence of the IRAF cl executable
 [ -n "$(type -P cl)" ] || abort "conda environment is not activated"

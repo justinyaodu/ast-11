@@ -16,7 +16,7 @@ for galaxy_dir in "$containing_dir"/*; do
 	[ -d "$galaxy_dir" ] || continue
 		
 	# use presence of indicator file as a safe stop signal
-	[ -f "STOP" ] && abort "stop file exists"
+	stop_if_requested
 
 	galaxy_name="$(basename "$galaxy_dir")"
 
