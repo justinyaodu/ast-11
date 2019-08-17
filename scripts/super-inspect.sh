@@ -98,17 +98,18 @@ parse_command() {
 		;;
 	f | find)
 		if [ -z "$2" ]; then
-			echo "    no search string given"
-			return
+			read -p 'enter search string: ' -r query
+		else
+			query="$2"
 		fi
 
 		for index in $(seq 0 $((galaxy_count - 1))); do
-			if grep -q "$2" <<< "${galaxy_dirs[$index]}"; then
+			if grep -q "$query" <<< "${galaxy_dirs[$index]}"; then
 				parse_command 'seek' $index
 				return
 			fi
 		done
-		echo "    no galaxy matching search string: $2"
+		echo "    no galaxy matching search string: $query"
 		;;
 	m | modsub)
 		parse_command 'view' 'modsub'
